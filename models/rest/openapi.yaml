@@ -1,0 +1,1023 @@
+openapi: 3.0.3
+info:
+  title: "FOCUS : models"
+  description: API для плагина focus.models
+  version: 2.0.0
+
+servers:
+  - url: http://0.0.0.0:8080/api/v1/admin
+
+paths:
+  /models-v2:
+    get:
+      tags: [ Models ]
+      summary: Получение списка моделей
+      parameters:
+        - $ref: "#/components/parameters/query.offset"
+        - $ref: "#/components/parameters/query.limit"
+        - $ref: "#/components/parameters/query.sort"
+        - $ref: "#/components/parameters/query.order"
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelsList'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /models-v2/{model-code}:
+    get:
+      tags: [ Models ]
+      summary: Получение описания модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Model'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /models-v2/{model-code}/fields/{field-code}:
+    get:
+      tags: [ Model Field Values ]
+      summary: Получение значений для параметра фильтрации. Тип (список)
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+        - $ref: '#/components/parameters/path.fieldCode'
+        - $ref: '#/components/parameters/query.offset'
+        - $ref: '#/components/parameters/query.limit'
+        - $ref: '#/components/parameters/query.query'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelSettingsFilterValues'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /models-v2/{model-code}/elements:
+    post:
+      tags: [ Model Elements ]
+      summary: Создание элемента модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+      requestBody:
+        description: Данные элемента модели
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelElement'
+      responses:
+        201:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelElementId'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /models-v2/{model-code}/elements/list:
+    post:
+      tags: [ Model Elements ]
+      summary: Получение списка элементов модели
+      description: |
+        - при запросе на странице списка элементов модели не нужно передавать поле query в query-параметрах и поле fields в теле запроса
+        - при запросе для получения подсказок поля формы передаются поле query в query-параметрах и поле fields в теле запроса
+        - query параметр работает только если передан список полей в fields, поиск будет именно по этим полям
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+        - $ref: '#/components/parameters/query.offset'
+        - $ref: '#/components/parameters/query.limit'
+        - $ref: '#/components/parameters/query.sort'
+        - $ref: '#/components/parameters/query.order'
+        - $ref: '#/components/parameters/query.query'
+      requestBody:
+        description: Данные модели
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ElementListRequestParams'
+
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelElementsList'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+  /models-v2/{model-code}/elements/batch-delete:
+    post:
+      tags: [ Model Elements ]
+      summary: Массовое удаление элементов модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+      requestBody:
+        description: Массовое удаление элементов модели
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - pKeys
+              properties:
+                pKeys:
+                  type: array
+                  items:
+                    oneOf:
+                      - type: string
+                        minLength: 1
+                      - type: integer
+                        minimum: 1
+                      - $ref: "#/components/schemas/Uuid"
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /models-v2/{model-code}/elements/{model-element-id}:
+    get:
+      tags: [ Model Element ]
+      summary: Получение элемента модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+        - $ref: '#/components/parameters/path.modelElementId'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelElement'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    put:
+      tags: [ Model Element ]
+      summary: Изменение элемента модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+        - $ref: '#/components/parameters/path.modelElementId'
+      requestBody:
+        description: Данные элемента модели
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelElement'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    delete:
+      tags: [ Model Element ]
+      summary: Удаление элемента модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+        - $ref: '#/components/parameters/path.modelElementId'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+  /models-v2/{model-code}/export:
+    get:
+      tags: [ Model Export ]
+      summary: Получение информации о последнем экспорте модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelExportInfo'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+    post:
+      tags: [ Model Export ]
+      summary: Инициация экспорта модели
+      parameters:
+        - $ref: '#/components/parameters/path.modelCode'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        404:
+          $ref: '#/components/responses/404'
+        500:
+          $ref: '#/components/responses/500'
+
+components:
+  parameters:
+    path.modelCode:
+      name: model-code
+      in: path
+      description: Код модели
+      required: true
+      schema:
+        type: string
+
+    path.fieldCode:
+      name: field-code
+      in: path
+      description: Идентификатор поля модели
+      required: true
+      schema:
+        type: string
+
+    path.modelElementId:
+      name: model-element-id
+      in: path
+      description: Идентификатор элемента модели
+      required: true
+      schema:
+        type: string
+
+    query.sort:
+      description: Сортировка
+      name: sort
+      in: query
+      schema:
+        type: string
+        example: name
+
+    query.order:
+      name: order
+      in: query
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+
+    query.offset:
+      name: offset
+      in: query
+      required: true
+      description: Номер строки, которой начинается выборка
+      schema:
+        minimum: 0
+        type: integer
+        example: 0
+
+    query.limit:
+      name: limit
+      required: true
+      in: query
+      description: Количество возвращаемых объектов на странице
+      schema:
+        type: integer
+        minimum: 10
+        maximum: 100
+        example: 20
+
+    query.query:
+      name: query
+      in: query
+      description: Поисковый запрос
+      schema:
+        type: string
+        example: "Перезвоните мне"
+
+    query.fields:
+      name: fields
+      in: query
+      description: Коды полей модели
+      required: true
+      schema:
+        type: array
+        items:
+          type: string
+        minimum: 1
+
+    query.pkeys:
+      name: pkeys
+      in: query
+      description: Идентификаторы элементов модели
+      required: false
+      schema:
+        type: array
+        items:
+          $ref: '#/components/schemas/Any'
+
+  schemas:
+    ModelsList:
+      title: Объект списка моделей
+      type: object
+      properties:
+        items:
+          title: Список моделей
+          items:
+            $ref: '#/components/schemas/ModelPreview'
+        total:
+          title: Общее количество
+          type: integer
+
+    ModelPreview:
+      title: Объект модели
+      type: object
+      properties:
+        name:
+          title: Название модели
+          type: string
+          example: Магазины
+        code:
+          title: Код модели
+          type: string
+          example: stores
+
+    Model:
+      title: Объект модели
+      type: object
+      properties:
+        name:
+          title: Название модели
+          type: string
+          example: Магазины
+        code:
+          title: Код модели
+          type: string
+          example: stores
+        identifierCode:
+          title: Код поля идентификатора модели
+          type: string
+          example: id
+        views:
+          $ref: '#/components/schemas/ModelSettings'
+
+    ModelSettings:
+      title: Настройки модели
+      type: object
+      properties:
+        create:
+          title: Форма создания элемента
+          type: object
+          properties:
+            formFields:
+              $ref: '#/components/schemas/FormFields'
+            validation:
+              $ref: '#/components/schemas/FormValidation'
+        update:
+          title: Форма редактирования элемента
+          type: object
+          properties:
+            formFields:
+              $ref: '#/components/schemas/FormFields'
+            validation:
+              $ref: '#/components/schemas/FormValidation'
+        list:
+          title: Список элементов
+          type: object
+          properties:
+            fields:
+              $ref: '#/components/schemas/ListFields'
+        filter:
+          title: Форма фильтра в списке
+          properties:
+            formFields:
+              $ref: '#/components/schemas/FormFields'
+
+    FormFields:
+      title: Список полей формы
+      type: array
+      items:
+        $ref: '#/components/schemas/FieldView'
+      example:
+        - code: code
+          name: Код
+          type: textInput
+          multiple: false
+          sortable: false
+        - code: name
+          name: Название
+          type: textInput
+          multiple: false
+          sortable: false
+          extra:
+            utils:
+              - code: slugify
+                field: code
+        - code: email
+          name: Почта
+          type: emailInput
+          multiple: false
+        - code: createdAt
+          name: Дата создания
+          type: dateTimePicker
+          multiple: false
+
+    FieldView:
+      title: Описание поля формы
+      type: object
+      required:
+        - code
+        - name
+        - type
+      properties:
+        code:
+          title: Код поля
+          type: string
+          example: name
+        name:
+          title: Название поля
+          type: string
+          example: Название
+        type:
+          type: string
+          enum:
+            - none
+            - checkbox
+            - intInput
+            - uintInput
+            - floatInput
+            - rating
+            - select
+            - datePickerInput # с html-разметкой
+            - dateTimePicker # с html-разметкой и плагинами
+            - textarea # с загрузкой медиа из медиа библиотеки
+            - textInput
+            - wysiwyg
+            - editorJs
+            - media
+            - phoneInput
+            - emailInput
+        multiple:
+          title: Множественное
+          description: Только для типов media, textInput, phone, email, select
+          type: boolean
+        sortable:
+          title: Сортируемое (с drag&drop)
+          description: Только для полей с признаком multiple
+          type: boolean
+        block:
+          title: Блок, в котором будет это поле
+          type: string
+          example: Другое
+        hidden:
+          title: Поле скрыто
+          type: boolean
+        disabled:
+          title: Поле неактивно
+          type: boolean
+        extra:
+          anyOf:
+            - description: Только для полей типа select
+              properties:
+                request:
+                  $ref: '#/components/schemas/Request'
+            - description: Только для полей типа select
+              properties:
+                selectData:
+                  title: Данные для select-а
+                  type: array
+                  minimum: 1
+                  items:
+                    type: object
+                    required:
+                      - value
+                      - label
+                    properties:
+                      value:
+                        title: Значение
+                      label:
+                        title: Лейбл
+                        type: string
+                  example:
+                    - label: Да
+                      value: true
+                    - label: Нет
+                      value: false
+            - description: Только для полей типа editorJs
+              properties:
+                productsHints:
+                  type: object
+                  properties:
+                    identifier:
+                      title: Код поля, которое является идентификатором
+                      type: string
+                    display:
+                      title: Коды полей, которые необходимо отображать
+                      type: array
+                      items:
+                        type: string
+                    request:
+                      $ref: '#/components/schemas/Request'
+                mediaUpload:
+                  type: object
+                  properties:
+                    request:
+                      $ref: '#/components/schemas/Request'
+            - description: Только для полей типа textInput
+              properties:
+                utils:
+                  title: Утилиты
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      code:
+                        title: Код утилиты
+                        type: string
+                        enum:
+                          - slugify # формат abc-def123-ghijkl456
+                      field:
+                        title: Зависимое поле
+                        type: string
+
+    ListFields:
+      title: Настройки таблицы в списке элементов модели
+      type: array
+      items:
+        type: object
+        properties:
+          code:
+            title: Код колонки
+            type: string
+          name:
+            title: Название колонки
+            type: string
+          sortable:
+            title: Можно сортировать
+            type: boolean
+          isTime:
+            title: Является временем
+            type: boolean
+      example:
+        - code: name
+          name: Название
+          sortable: true
+          isTime: false
+        - code: active
+          name: Активность
+          sortable: false
+          isTime: false
+        - code: createdAt
+          name: Дата создания
+          isTime: true
+          sortable: true
+        - code: activeFrom
+          name: Дата начала активности
+          sortable: true
+          isTime: true
+        - code: emails
+          name: Список почт
+          sortable: false
+          isTime: false
+
+    FormValidation:
+      title: Валидация формы
+      type: array
+      items:
+        type: object
+        additionalProperties:
+          $ref: '#/components/schemas/Field'
+      example:
+        code:
+          type: string
+          title: Код
+          required: true
+        name:
+          type: string
+          title: Название
+          required: true
+          min: 3
+          max: 50
+        email:
+          type: string
+          title: Email
+          email: true
+        createdAt:
+          type: date
+          title: Дата создания
+
+    Field:
+      type: object
+      required:
+        - type
+        - title
+      properties:
+        type:
+          title: Тип поля
+          enum:
+            - array
+            - boolean
+            - date
+            - number
+            - object
+            - string
+        title:
+          type: string
+        description:
+          type: string
+        required:
+          type: boolean
+        nullable:
+          type: boolean
+        properties:
+          allOf:
+            - description: Только для поля типа object
+            - $ref: '#/components/schemas/FormValidation'
+        items:
+          allOf:
+            - description: Только для поля типа array
+            - $ref: '#/components/schemas/Field'
+        min:
+          type: integer
+        max:
+          type: integer
+        email:
+          type: boolean
+        uri:
+          type: boolean
+        phone:
+          type: boolean
+        unique:
+          description: Только для поля типа array и object. Для остальных игнорировать
+          type: boolean
+
+    Request:
+      type: object
+      description: Запрос внутри CMS
+      required:
+        - uri
+        - meth
+      properties:
+        service:
+          type: string
+          description: Сервис, к которому необходимо сделать запрос
+        uri:
+          type: string
+          example: "https://krakend.farmperspektiva.aeroidea.ru/api/v1/geo/suggest/address"
+        meth:
+          type: string
+          enum:
+            - GET
+            - POST
+            - PUT
+            - PATCH
+            - DELETE
+        save:
+          type: string
+          example: "kladrId"
+        display:
+          type: string
+          example: value
+        body:
+          type: object
+          additionalProperties: true
+          minProperties: 1
+          description: Только для POST запросов
+        paginated:
+          type: boolean
+      example:
+        uri: "https://krakend.farmperspektiva.aeroidea.ru/api/v1/geo/suggest/address"
+        meth: "POST"
+        save: "kladrId"
+        display: "value"
+        body:
+          count: 20
+          fromBound: "region"
+          toBound: "settlement"
+        paginated: false
+
+    ModelSettingsFilterValues:
+      title: Объект, содержащий список значений фильтра. Тип "Список"
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Any"
+          uniqueItems: true
+        total:
+          title: Общее количество значений
+          type: integer
+          example: 80
+
+    ModelElementsList:
+      title: Список элементов модели
+      type: object
+      properties:
+        items:
+          title: Элементы модели
+          type: array
+          items:
+            $ref: '#/components/schemas/ModelElement'
+        total:
+          title: Общее количество элементов
+          example: 444
+
+    ModelElement:
+      title: Элемент модели
+      type: object
+      description: |
+        Если в описании указано multiple: true, то значение поля должно передаваться массивом
+      additionalProperties:
+        $ref: "#/components/schemas/Any"
+      example: {
+        uuidField: "177e38f0-7e81-4fdf-9f1c-457acd36440d",
+        stringField: "Заголовок",
+        numericField: 123,
+        multipleNumericField: [ 123 ],
+        datetimeField: "2012-01-02T15:04:05Z",
+        dateField: "2012-01-02T00:00:00Z",
+        checkboxField: true,
+        emailField: "mail@mail.ru",
+        phoneField: "+79999999999",
+        textField: "Some text here",
+        floatField: 0.25,
+        multipleFloatField: [ 0.25, 0.35 ],
+        modelField: { id: "177e38f0-7e81-4fdf-9f1c-457acd36440d" },
+        multipleModelField: [ "177e38f0-7e81-4fdf-9f1c-457acd36440d", "177e38f0-7e81-4fdf-9f1c-457acd36440d" ],
+        mediaField: { id: "177e38f0-7e81-4fdf-9f1c-457acd36440d" },
+        multipleMediaField: [ "177e38f0-7e81-4fdf-9f1c-457acd36440d", "177e38f0-7e81-4fdf-9f1c-457acd36440d" ]
+      }
+
+    ModelElementId:
+      title: Объект id элемента модели
+      type: object
+      properties:
+        modelElementId:
+          type: string
+          format: uuid
+          description: Идентификатор созданного ресурса
+          example: "d5633220-248b-482c-b5b3-5f6caecf2197"
+
+    ElementListRequestParams:
+      title: Параметры для запроса получения списка элементов
+      type: object
+      properties:
+        fields:
+          type: string
+          items:
+            title: Коды полей, которые запрашиваются
+            type: string
+        filter:
+          $ref: '#/components/schemas/ElementListFilterParams'
+
+    ElementListFilterParams:
+      type: object
+      title: Параметры для фильтрации списка элементов модели
+      additionalProperties:
+        type: array
+        items:
+          $ref: "#/components/schemas/Any"
+      example: {
+        uuidField: [ "177e38f0-7e81-4fdf-9f1c-457acd36440d", ... ],
+        stringField: [ "Заголовок", ... ],
+        numericField: [ 123, ... ],
+        datetimeField: [ "2012-01-02T15:04:05Z", "2013-01-02T15:04:05Z" ],
+        dateField: [ "2012-01-02T00:00:00Z", "2013-01-02T00:00:00Z" ],
+        checkboxField: [ true, ... ],
+        emailField: [ "mail@mail.ru", ... ],
+        phoneField: [ "+79999999999", ... ],
+        textField: [ "Some text here", "other text", ... ],
+        floatField: [ 0.25, 0.35, ... ],
+        modelField: [ "177e38f0-7e81-4fdf-9f1c-457acd36440d", ... ],
+      }
+
+    ModelExportInfo:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+        modelCode:
+          description: Код модели
+          type: string
+        filepath:
+          description: URL до файла
+          type: string
+          format: url
+        status:
+          description: Текущий статус файла
+          type: string
+          enum:
+            - pending
+            - error
+            - succeed
+        time:
+          description: Время начала экспорта
+          type: string
+
+
+    Any:
+      title: Объект любого типа
+      nullable: true
+      anyOf:
+        - type: string
+        - type: number
+        - type: integer
+        - type: boolean
+        - type: array
+          items:
+            $ref: "#/components/schemas/Any"
+        - type: object
+
+    Uuid:
+      type: string
+      format: uuid
+      description: Идентификатор элемента (Уникальный)
+      example: '73e0bb5e-057a-427c-a5fb-3f3254f0f7df'
+
+    Error:
+      required:
+        - applicationErrorCode
+        - message
+      type: object
+      properties:
+        applicationErrorCode:
+          type: string
+          description: |
+            Код ошибки, к которому привел вызов метода
+          example: tooManyRequests
+        message:
+          type: string
+          description: |
+            Человекочитаемое сообщение об ошибке
+          example: Ошибка отправки СМС-сообщения
+        debug:
+          type: string
+          description: |
+            Дополнительная отладочная информация
+          example: 'org.postgresql.util.PSQLException: ERROR: canceling statement
+            due to user request'
+      description: Описание ошибки для всех методов
+
+
+  examples:
+    kladrIdsRequest:
+      value:
+        uri: "https://krakend.farmperspektiva.aeroidea.ru/api/v1/geo/suggest/address"
+        meth: "POST"
+        save: "kladrId"
+        display: "value"
+        body:
+          count: 20
+          fromBound: "region"
+          toBound: "settlement"
+        paginated: false
+      summary: Описание запроса получения КЛАДР
+
+    productsListRequest:
+      value:
+        service: "catalog"
+        uri: "/api/v1/models-v2/product/elements?fields=id&fields=name&sort=name"
+        meth: "GET"
+        save: "id"
+        display: "title"
+        paginated: true
+      summary: Описание запроса получения продуктов из сервиса Каталог
+
+    mediaUploadFormFieldOpt:
+      value:
+        byFile: "/media/files/upload"
+      summary: Описание запроса загрузки изображения
+
+    editorJsFormField:
+      value:
+        type: select
+        dataType: string
+        multiple: true
+        opts:
+          mediaUpload:
+            $ref: '#/components/examples/mediaUploadFormFieldOpt'
+          productsList:
+            $ref: '#/components/examples/productsListRequest'
+
+    selectKladrIdsFormField:
+      value:
+        type: select
+        dataType: string
+        multiple: true
+        opts:
+          request:
+            $ref: '#/components/examples/kladrIdsRequest'
+
+    selectProductsFormField:
+      value:
+        type: select
+        dataType: string
+        multiple: true
+        opts:
+          request:
+            $ref: '#/components/examples/productsListRequest'
+
+    productsField:
+      externalValue: '#/components/examples/selectProductsFormField'
+      value:
+        name: Продукты
+        code: products
+        viewType: modelsCollection
+        formField:
+          $ref: '#/components/examples/selectProductsFormField'
+        filterable: false
+        shownInList: false
+        sortable: false
+        associationCode: product
+
+    allFieldsExample:
+      value:
+        items:
+          $ref: '#/components/examples/productsField'
+
+
+  responses:
+    204:
+      description: Метод успешно отработал
+
+    400:
+      description: Ошибочный запрос, например, отсутствует один из параметров
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            applicationErrorCode: Bad Request
+            message: Поле обязательно
+            debug: 'org.postgresql.util.PSQLException: ERROR: canceling statement due to user request'
+
+    404:
+      description: Запрашиваемый ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            applicationErrorCode: Not Found
+            message: Элемент не найден
+            debug: 'org.postgresql.util.PSQLException: ERROR: canceling statement due to user request'
+
+    409:
+      description: Ресурс, создаваемый методом POST, уже существует
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            applicationErrorCode: Conflict
+            message: Конфликт
+            debug: 'org.postgresql.util.PSQLException: ERROR: canceling statement due to user request'
+
+    500:
+      description: Серверная ошибка
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            applicationErrorCode: Internal Server Error
+            message: Возникла ошибка, попробуйте позже
+            debug: 'org.postgresql.util.PSQLException: ERROR: canceling statement due to user request'
+

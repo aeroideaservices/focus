@@ -1,0 +1,9 @@
+{
+    "main": [
+        "main-page",
+        "content",
+        "catalog.categories",
+        "!admin",
+        "!cart.post"
+    ]
+}

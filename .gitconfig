@@ -1,0 +1,2 @@
+[url "ssh://git@gitlab.aeroidea.ru:15123/"]
+        insteadOf = https://gitlab.aeroidea.ru/

@@ -1,0 +1,582 @@
+openapi: 3.0.3
+info:
+  title: "FOCUS : configurations"
+  description: API для плагина focus.configurations
+  version: 1.0.0
+
+paths:
+  /configurations:
+    get:
+      tags:
+        - Configurations
+      summary: Получение списка конфигураций
+      description: Получение списка конфигураций
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/query"
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConfiguration'
+        400:
+          $ref: '#/components/responses/400Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    post:
+      tags:
+        - Configurations
+      summary: Создание конфигурации
+      description: Создание конфигурации
+      requestBody:
+        description: Конфигурация
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveConfiguration'
+      responses:
+        201:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        400:
+          $ref: '#/components/responses/400Error'
+        409:
+          $ref: '#/components/responses/409Error'
+        500:
+          $ref: '#/components/responses/500Error'
+  /configurations/{configuration-id}:
+    get:
+      tags:
+        - Configuration
+      summary: Получение конфигурации
+      operationId: GetConfigurationById
+      description: Получение элемента конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    put:
+      tags:
+        - Configuration
+      summary: Сохранение конфигурации
+      operationId: SaveConfigurationById
+      description: Сохранение конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+      requestBody:
+        description: Конфигурация
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveConfiguration'
+      responses:
+        204:
+          description: Метод успешно отработал
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        409:
+          $ref: '#/components/responses/409Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    delete:
+      tags:
+        - Configuration
+      summary: Удаление конфигурации
+      operationId: DeleteConfigurationById
+      description: Удаление конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+      responses:
+        204:
+          description: Метод успешно отработал
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+  /configurations/{configuration-id}/options:
+    get:
+      tags:
+        - Options
+      summary: Получение списка параметров конфигурации
+      operationId: GetConfigurationOptions
+      description: Получение списка параметров конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sort"
+        - $ref: "#/components/parameters/order"
+        - $ref: "#/components/parameters/query"
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListConfigurationOption'
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    post:
+      tags:
+        - Options
+      summary: Создание параметра конфигурации
+      description: Создание параметра конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+      requestBody:
+        description: Параметр конфигурации
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateConfigurationOption'
+      responses:
+        201:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Success'
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        409:
+          $ref: '#/components/responses/409Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    put:
+      tags:
+        - Options
+      summary: Сохранение значений настроек конфигурации
+      description: Сохранение значений настроек конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+      requestBody:
+        description: Значения конфигурации
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/DisplayConfigurationOption'
+      responses:
+        204:
+          description: Метод успешно отработал
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+  /configurations/{configuration-id}/options/{option-id}:
+    get:
+      tags:
+        - Option
+      summary: Получение параметра конфигурации
+      operationId: GetConfigurationOptionById
+      description: Получение параметра конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+        - $ref: "#/components/parameters/optionId"
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfigurationOption'
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    put:
+      tags:
+        - Option
+      summary: Сохранение параметра конфигурации
+      operationId: UpdateConfigurationOptionById
+      description: Сохранение параметра конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+        - $ref: "#/components/parameters/optionId"
+      requestBody:
+        description: Параметр конфигурации
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateConfigurationOption'
+      responses:
+        204:
+          description: Метод успешно отработал
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        409:
+          $ref: '#/components/responses/409Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    delete:
+      tags:
+        - Option
+      summary: Удаление параметра конфигурации
+      operationId: DeleteConfigurationOptionById
+      description: Удаление параметра конфигурации
+      parameters:
+        - $ref: "#/components/parameters/configurationId"
+        - $ref: "#/components/parameters/optionId"
+      responses:
+        204:
+          description: Метод успешно отработал
+        400:
+          $ref: '#/components/responses/400Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+
+
+components:
+  parameters:
+    offset:
+      name: offset
+      in: query
+      required: true
+      description: Номер строки, которой начинается выборка
+      schema:
+        minimum: 0
+        type: integer
+        example: 0
+
+    limit:
+      name: limit
+      required: true
+      in: query
+      description: Количество возвращаемых объектов на странице
+      schema:
+        type: integer
+        minimum: 10
+        maximum: 100
+        example: 20
+
+    sort:
+      name: sort
+      in: query
+      description: Поле для сортировки
+      schema:
+        type: string
+        example: id
+
+    order:
+      name: order
+      in: query
+      description: Направление для сортировки
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+
+    query:
+      name: query
+      in: query
+      description: Поисковый запрос
+      schema:
+        type: string
+        example: "Перезвоните мне"
+
+    configurationId:
+      name: configuration-id
+      in: path
+      description: Идентификатор конфигурации
+      required: true
+      schema:
+        $ref: "#/components/schemas/Uuid"
+
+    optionId:
+      name: option-id
+      in: path
+      description: Идентификатор настройки конфигурации
+      required: true
+      schema:
+        $ref: "#/components/schemas/Uuid"
+
+
+  schemas:
+    ListItems:
+      type: object
+      required:
+        - total
+        - items
+      properties:
+        total:
+          type: integer
+          description: |
+            Общее количество элементов
+          example: 10
+
+    ListConfiguration:
+      allOf:
+        - $ref: '#/components/schemas/ListItems'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Configuration'
+          description: |
+            Список конфигураций
+
+    ListConfigurationOption:
+      description: Список параметров конфигураций
+      allOf:
+        - $ref: '#/components/schemas/ListItems'
+        - properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConfigurationOption'
+
+    OptionShort:
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: Код параметра конфигурации
+          example: seo-text-title
+        value:
+          type: string
+          description: Значение параметра конфигурации
+          example: Грузовики Вольво и Рено!
+
+    Uuid:
+      type: string
+      format: uuid
+      description: Идентификатор элемента (Уникальный)
+      example: '73e0bb5e-057a-427c-a5fb-3f3254f0f7df'
+
+    Sluggable:
+      type: string
+      pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+      description: Код элемента, отображаемый в uri
+      example: 'sluggable-code'
+
+    Configuration:
+      allOf:
+        - type: object
+          description: |
+            Объект конфигурации
+          required:
+            - id
+          properties:
+            id:
+              $ref: '#/components/schemas/Uuid'
+        - $ref: '#/components/schemas/SaveConfiguration'
+
+    SaveConfiguration:
+      description: |
+        Объект конфигурации для сохранения
+      required:
+        - code
+        - name
+      type: object
+      properties:
+        code:
+          type: string
+          description: |
+            Код параметра конфигурации
+          example: seo-text
+          minLength: 3
+          maxLength: 50
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: |
+            Название конфигурации
+          example: Настройки СЕО-текста
+
+    ConfigurationOption:
+      required:
+        - id
+      allOf:
+        - description: Объект параметра конфигурации
+          properties:
+            id:
+              $ref: '#/components/schemas/Uuid'
+        - $ref: '#/components/schemas/UpdateConfigurationOption'
+
+    DisplayConfigurationOption:
+      required:
+        - code
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: |
+            Код параметра конфигурации
+          example: seo-text
+        value:
+          type: string
+          description: |
+            Значение параметра конфигурации
+          example: Вольво - лучшие грузовики
+      description: |
+        Объект содержащий код параметра конфигурации и его значение
+
+    CreateConfigurationOption:
+      description: |
+        Объект параметра конфигурации
+      required:
+        - code
+        - name
+        - type
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: |
+            Код параметра конфигурации
+          example: seo-text-title
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: |
+            Название параметра конфигурации
+          example: Заголовок в блоке СЕО-текста
+        type:
+          type: string
+          enum: [ string, text, integer, checkbox, file, image, datetime, date ]
+
+    UpdateConfigurationOption:
+      description: |
+        Объект параметра конфигурации
+      required:
+        - code
+        - name
+        - type
+      type: object
+      properties:
+        code:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: |
+            Код параметра конфигурации
+          example: seo-text-title
+        name:
+          type: string
+          minLength: 3
+          maxLength: 50
+          description: |
+            Название параметра конфигурации
+          example: Заголовок в блоке СЕО-текста
+        type:
+          type: string
+          enum: [ string, text, int, checkbox, file, image, datetime, date ]
+
+
+    Error:
+      required:
+        - applicationErrorCode
+        - message
+      type: object
+      properties:
+        applicationErrorCode:
+          type: string
+          description: |
+            Код ошибки, к которому привел вызов метода
+          example: tooManyRequests
+        message:
+          type: string
+          description: |
+            Человекочитаемое сообщение об ошибке
+          example: Ошибка отправки СМС-сообщения
+        debug:
+          type: string
+          description: |
+            Дополнительная отладочная информация
+          example: 'org.postgresql.util.PSQLException: ERROR: canceling statement
+            due to user request'
+      description: Описание ошибки для всех методов
+
+    Success:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+
+
+  responses:
+
+    400Error:
+      description: Ошибочный запрос, например, отсутствует один из параметров
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    404Error:
+      description: Запрашиваемый ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    409Error:
+      description: Ресурс, создаваемый методом POST, уже существует
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    500Error:
+      description: Серверная ошибка
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+

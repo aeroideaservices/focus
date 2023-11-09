@@ -1,0 +1,11 @@
+/.idea/
+/content.db
+/.docker/minio/
+/.env
+/test/
+/**/.idea/
+/.gitlab-ci.yaml
+/tagging.go
+/tagging.sh
+/plugins
+/.local

@@ -1,0 +1,649 @@
+openapi: 3.0.0
+info:
+  title: FOCUS. Меню
+  description: Сервис для управления меню
+  version: 1.0.0
+
+paths:
+  /menus:
+    get:
+      tags:
+        - Menus
+      summary: Получение списка меню
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenusList'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    post:
+      tags:
+        - Menus
+      summary: Создание меню
+      requestBody:
+        description: Параметры запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveMenu'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+  /menus/{menu-id}:
+    get:
+      tags:
+        - Menu
+      summary: Получение меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Menu'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        403:
+          $ref: '#/components/responses/403Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    put:
+      tags:
+        - Menu
+      summary: Обновление меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+      requestBody:
+        description: Параметры запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SaveMenu'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    delete:
+      tags:
+        - Menu
+      summary: Удаление меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+
+  /menus/domains:
+    get:
+      tags:
+        - Domains
+      parameters:
+        - $ref: "#/components/parameters/offset"
+        - $ref: "#/components/parameters/limit"
+      responses:
+        200:
+          description: Succeed
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DomainsList'
+        400:
+          $ref: '#/components/responses/400Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    post:
+      tags:
+        - Domains
+      requestBody:
+        description: Параметры запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDomain'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400Error'
+        409:
+          $ref: '#/components/responses/409Error'
+        500:
+          $ref: '#/components/responses/500Error'
+
+  /menus/{menu-id}/items:
+    get:
+      tags:
+        - Menu items
+      summary: Получение пунктов меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+        - $ref: '#/components/parameters/parentMenuItemId'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/order'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MenuItemPreview'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    post:
+      tags:
+        - Menu items
+      summary: Создание пункта меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+      requestBody:
+        description: Параметры запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMenuItem'
+      responses:
+        201:
+          $ref: '#/components/responses/201'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+  /menus/{menu-id}/items/{menu-item-id}:
+    get:
+      tags:
+        - Menu item
+      summary: Получение пункта меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+        - $ref: '#/components/parameters/menuItemId'
+      responses:
+        200:
+          description: Метод успешно отработал
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MenuItem'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    put:
+      tags:
+        - Menu item
+      summary: Изменение пункта меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+        - $ref: '#/components/parameters/menuItemId'
+      requestBody:
+        description: Параметры запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMenuItem'
+
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+    delete:
+      tags:
+        - Menu item
+      summary: Удаление пункта меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+        - $ref: '#/components/parameters/menuItemId'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+  /menus/{menu-id}/items/{menu-item-id}/move:
+    post:
+      tags:
+        - Menu item
+      summary: Перемещение пункта меню
+      parameters:
+        - $ref: '#/components/parameters/menuId'
+        - $ref: '#/components/parameters/menuItemId'
+      requestBody:
+        description: Параметры запроса
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveMenuItem'
+      responses:
+        204:
+          $ref: '#/components/responses/204'
+        400:
+          $ref: '#/components/responses/400Error'
+        401:
+          $ref: '#/components/responses/401Error'
+        404:
+          $ref: '#/components/responses/404Error'
+        500:
+          $ref: '#/components/responses/500Error'
+
+components:
+  parameters:
+    offset:
+      name: offset
+      in: query
+      required: true
+      description: Номер строки, которой начинается выборка
+      schema:
+        minimum: 0
+        type: integer
+        example: 0
+
+    limit:
+      name: limit
+      required: true
+      in: query
+      description: Количество возвращаемых объектов на странице
+      schema:
+        type: integer
+        minimum: 10
+        maximum: 100
+        example: 20
+
+    sort:
+      name: sort
+      in: query
+      description: Поле для сортировки
+      schema:
+        type: string
+        example: id
+
+    order:
+      name: order
+      in: query
+      description: Направление для сортировки
+      schema:
+        type: string
+        enum:
+          - asc
+          - desc
+
+    menuId:
+      name: menu-id
+      in: path
+      required: true
+      description: ID меню
+      schema:
+        $ref: "#/components/schemas/Uuid"
+
+    menuItemId:
+      name: menu-item-id
+      in: path
+      required: true
+      description: ID пункта меню
+      schema:
+        $ref: "#/components/schemas/Uuid"
+
+    parentMenuItemId:
+      name: parentMenuItemId
+      in: query
+      description: ID родительского пункта меню
+      schema:
+        $ref: "#/components/schemas/Uuid"
+
+    query:
+      name: query
+      in: query
+      description: Поисковый запрос
+      schema:
+        type: string
+        example: "Перезвоните мне"
+
+    filter:
+      name: filter
+      in: query
+      schema:
+        type: object
+        additionalProperties: false
+        properties:
+          field:
+            description: Значение поля
+            type: string
+            example: field_value
+      style: deepObject
+
+
+  schemas:
+    Menu:
+      allOf:
+        - type: object
+          description: |
+            Объект Меню
+          properties:
+            id:
+              $ref: '#/components/schemas/Uuid'
+        - $ref: '#/components/schemas/SaveMenu'
+
+    MenusList:
+      allOf:
+        - $ref: '#/components/schemas/ItemsList'
+        - properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/Menu'
+
+    SaveMenu:
+      type: object
+      required:
+        - name
+        - code
+      properties:
+        name:
+          type: string
+          example: "Верхнее меню 1"
+        code:
+          type: string
+          example: top
+
+    MenuItem:
+      allOf:
+        - $ref: '#/components/schemas/CreateMenuItem'
+        - type: object
+          description: |
+            Объект Пункт меню
+          properties:
+            id:
+              $ref: '#/components/schemas/Uuid'
+            position:
+              type: integer
+            MenuId:
+              $ref: '#/components/schemas/Uuid'
+
+    MenuItemPreview:
+      type: object
+      required:
+        - name
+        - url
+        - position
+        - menuId
+      properties:
+        name:
+          type: string
+          example: "Пункт меню 1"
+        url:
+          type: string
+          example: "path-to-item"
+        position:
+          type: integer
+          example: 2
+          minimum: 1
+          description: Порядок пункта меню
+        menuId:
+          $ref: '#/components/schemas/Uuid'
+        parentItemId:
+          $ref: '#/components/schemas/Uuid'
+
+    CreateMenuItem:
+      type: object
+      required:
+        - name
+        - url
+        - menuId
+      properties:
+        name:
+          type: string
+          example: "Пункт меню 1"
+        domainId:
+          $ref: "#/components/schemas/Uuid"
+        url:
+          type: string
+          example: "path-to-item"
+        parentMenuItemId:
+          $ref: '#/components/schemas/Uuid'
+        additionalFields:
+          type: array
+          items:
+            type: object
+            required:
+              - code
+              - value
+            properties:
+              code:
+                type: string
+                description: Код дополнительного поля
+                example: color
+              value:
+                type: string
+                description: Значение дополнительного поля
+                example: "#f00"
+
+    UpdateMenuItem:
+      type: object
+      required:
+        - name
+        - url
+        - menuId
+      properties:
+        name:
+          type: string
+          example: "Пункт меню 1"
+        domainId:
+          $ref: "#/components/schemas/Uuid"
+        url:
+          type: string
+          example: "path-to-item"
+        parentMenuItemId:
+          $ref: '#/components/schemas/Uuid'
+
+    MoveMenuItem:
+      type: object
+      required:
+        - position
+      properties:
+        parentMenuItemId:
+          $ref: "#/components/schemas/Uuid"
+        position:
+          type: integer
+          example: 2
+          minimum: 1
+          description: Порядок пункта меню
+
+    ItemsList:
+      type: object
+      required:
+        - total
+        - items
+      properties:
+        total:
+          type: integer
+          description: |
+            Общее количество элементов
+          example: 10
+
+    DomainsList:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ItemsList'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: "#/components/schemas/CreateDomain"
+
+    CreateDomain:
+      type: object
+      required:
+        - domain
+      properties:
+        domain:
+          type: string
+          example: http://domain/com/api
+
+
+    Uuid:
+      type: string
+      format: uuid
+      description: Идентификатор элемента (Уникальный)
+      example: '73e0bb5e-057a-427c-a5fb-3f3254f0f7df'
+
+    Error:
+      required:
+        - applicationErrorCode
+        - message
+      type: object
+      properties:
+        applicationErrorCode:
+          type: string
+          description: |
+            Код ошибки, к которому привел вызов метода
+          example: tooManyRequests
+        message:
+          type: string
+          description: |
+            Человекочитаемое сообщение об ошибке
+          example: Ошибка отправки СМС-сообщения
+        debug:
+          type: string
+          description: |
+            Дополнительная отладочная информация
+          example: 'org.postgresql.util.PSQLException: ERROR: canceling statement
+            due to user request'
+      description: Описание ошибки для всех методов
+
+    Success:
+      required:
+        - id
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Uuid'
+
+
+  responses:
+    201:
+      description: Значение создано
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Success'
+    204:
+      description: Успешно
+
+    400Error:
+      description: Ошибочный запрос, например, отсутствует один из параметров
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    401Error:
+      description: Ошибка аутентификации
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    403Error:
+      description: Недостаточно прав для выполнения запроса
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    404Error:
+      description: Запрашиваемый ресурс не найден
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    409Error:
+      description: Ресурс, создаваемый методом POST, уже существует
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
+    500Error:
+      description: Серверная ошибка
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+
