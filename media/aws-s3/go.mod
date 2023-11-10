@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.33.1
 	github.com/pkg/errors v0.9.1
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/media/plugin v0.0.0-20230522075132-16c508e5b26c
+	github.com/aeroideaservices/focus/media/plugin v1.0.0
 )
 
 require (

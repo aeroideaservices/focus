@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/configurations/plugin v0.0.0-20230628090109-ae18726c19ad
+	github.com/aeroideaservices/focus/configurations/plugin v1.0.0
 	gorm.io/gorm v1.25.1
 )
 

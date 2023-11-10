@@ -5,9 +5,9 @@ go 1.19
 require (
 	github.com/google/uuid v1.3.0
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/models/plugin v0.1.11
-	github.com/aeroideaservices/focus/services/db/clause v0.0.0-20230522075737-5b32a4d95825
-	github.com/aeroideaservices/focus/services/errors v0.2.1
+	github.com/aeroideaservices/focus/models/plugin v1.0.0
+	github.com/aeroideaservices/focus/services/db/clause v1.0.0
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 	gorm.io/gorm v1.25.1
 )
 

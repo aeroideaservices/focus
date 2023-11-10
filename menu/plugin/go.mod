@@ -5,9 +5,9 @@ go 1.18
 require (
 	github.com/google/uuid v1.3.0
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/services/callbacks v0.0.1
-	github.com/aeroideaservices/focus/services/db/db_types v0.0.2
-	github.com/aeroideaservices/focus/services/errors v0.2.1
+	github.com/aeroideaservices/focus/services/callbacks v1.0.0
+	github.com/aeroideaservices/focus/services/db/db_types v1.0.0
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 )
 
 require (

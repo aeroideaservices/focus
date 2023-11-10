@@ -5,8 +5,8 @@ go 1.18
 require (
 	github.com/sarulabs/di/v2 v2.4.2
 	github.com/xuri/excelize/v2 v2.7.1
-	github.com/aeroideaservices/focus/models/plugin v0.0.0-20230516121556-e27c4813719a
-	github.com/aeroideaservices/focus/services/errors v0.1.6
+	github.com/aeroideaservices/focus/models/plugin v1.0.0
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 	golang.org/x/exp v0.0.0-20230321023759-10a507213a29
 )
 

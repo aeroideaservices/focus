@@ -6,7 +6,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1
 	github.com/go-playground/validator/v10 v10.13.0
 	github.com/google/uuid v1.3.0
-	github.com/aeroideaservices/focus/services/errors v0.1.5
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 	golang.org/x/text v0.8.0
 )
 

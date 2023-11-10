@@ -6,8 +6,8 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.16.6
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.27.0
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/models/plugin v0.0.0-20230516121259-29d18764dbae
-	github.com/aeroideaservices/focus/services/errors v0.1.6
+	github.com/aeroideaservices/focus/models/plugin v1.0.0
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 )
 
 require (

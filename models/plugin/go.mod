@@ -7,10 +7,10 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/pkg/errors v0.9.1
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/services/callbacks v0.0.1
-	github.com/aeroideaservices/focus/services/errors v0.2.1
-	github.com/aeroideaservices/focus/services/formatting/strings v0.0.0-20230609084158-717b926e53b2
-	github.com/aeroideaservices/focus/services/validation v0.2.9
+	github.com/aeroideaservices/focus/services/callbacks v1.0.0
+	github.com/aeroideaservices/focus/services/errors v1.0.0
+	github.com/aeroideaservices/focus/services/formatting/strings v1.0.0
+	github.com/aeroideaservices/focus/services/validation v1.0.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 )

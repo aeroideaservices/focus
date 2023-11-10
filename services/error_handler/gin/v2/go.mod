@@ -4,7 +4,7 @@ go 1.18
 
 require (
 	github.com/gin-gonic/gin v1.8.1
-	github.com/aeroideaservices/focus/services/errors v0.1.6
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/text v0.9.0
 )
