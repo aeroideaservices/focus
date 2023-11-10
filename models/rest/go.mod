@@ -29,8 +29,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
-	github.com/aeroideaservices/focus/services/callbacks v0.0.0-20230629141952-05b1a3a45f3f // indirect
-	github.com/aeroideaservices/focus/services/formatting/strings v0.0.0-20230609084158-717b926e53b2 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect

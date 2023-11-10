@@ -3,14 +3,16 @@ module github.com/aeroideaservices/focus/menu/rest
 go 1.18
 
 require (
+	github.com/aeroideaservices/focus/menu/plugin v1.0.0
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.3.0
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/menu/plugin v1.0.0
-	github.com/aeroideaservices/focus/services/errors v1.0.0
 )
 
 require (
+	github.com/aeroideaservices/focus/services/callbacks v1.0.0 // indirect
+	github.com/aeroideaservices/focus/services/db/db_types v1.0.0 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
@@ -21,7 +23,7 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.4 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
@@ -33,8 +35,6 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
-	github.com/aeroideaservices/focus/services/callbacks v0.0.1 // indirect
-	github.com/aeroideaservices/focus/services/db/db_types v0.0.2 // indirect
 	golang.org/x/arch v0.3.0 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
