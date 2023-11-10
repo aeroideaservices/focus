@@ -3,8 +3,8 @@ module github.com/aeroideaservices/focus/services/gin-middleware
 go 1.18
 
 require (
-	github.com/gin-gonic/gin v1.9.1
 	github.com/aeroideaservices/focus/services/errors v1.0.0
+	github.com/gin-gonic/gin v1.9.1
 )
 
 require (

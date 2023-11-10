@@ -3,10 +3,10 @@ module github.com/aeroideaservices/focus/services/access_control
 go 1.18
 
 require (
+	github.com/aeroideaservices/focus/services/errors v1.0.0
 	github.com/gin-gonic/gin v1.8.1
 	github.com/golang-jwt/jwt/v4 v4.4.2
 	github.com/sarulabs/di/v2 v2.4.2
-	github.com/aeroideaservices/focus/services/errors v1.0.0
 )
 
 require (
