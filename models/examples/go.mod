@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/google/uuid v1.3.0
-	github.com/aeroideaservices/focus/media/plugin v0.0.0-20230609084502-5ed04ac65db7
+	github.com/aeroideaservices/focus/media/plugin v0.1.0
 	github.com/aeroideaservices/focus/services/db/db_types v0.0.8
 	gorm.io/gorm v1.23.8
 )

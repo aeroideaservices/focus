@@ -16,6 +16,6 @@ require (
 require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.4 // indirect
-	github.com/aeroideaservices/focus/services/callbacks v0.0.0-20230629141952-05b1a3a45f3f // indirect
+	github.com/aeroideaservices/focus/services/callbacks v0.0.1 // indirect
 	github.com/aeroideaservices/focus/services/db/db_types v0.0.2 // indirect
 )
