@@ -3,14 +3,14 @@ module github.com/aeroideaservices/focus/models/plugin
 go 1.19
 
 require (
-	github.com/google/uuid v1.3.0
-	github.com/json-iterator/go v1.1.12
-	github.com/pkg/errors v0.9.1
-	github.com/sarulabs/di/v2 v2.4.2
 	github.com/aeroideaservices/focus/services/callbacks v1.0.0
 	github.com/aeroideaservices/focus/services/errors v1.0.0
 	github.com/aeroideaservices/focus/services/formatting/strings v1.0.0
 	github.com/aeroideaservices/focus/services/validation v1.0.0
+	github.com/google/uuid v1.3.0
+	github.com/json-iterator/go v1.1.12
+	github.com/pkg/errors v0.9.1
+	github.com/sarulabs/di/v2 v2.4.2
 	go.uber.org/zap v1.24.0
 	golang.org/x/exp v0.0.0-20230522175609-2e198f4a06a1
 )
