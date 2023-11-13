@@ -1,4 +1,4 @@
-module github.com/aeroideaservices/focus/models/aws-s3
+module github.com/aeroideaservices/focus/models/aws_s3
 
 go 1.18
 
