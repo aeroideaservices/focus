@@ -1,4 +1,4 @@
-module github.com/aeroideaservices/focus/services/gin-middleware
+module github.com/aeroideaservices/focus/services/gin_middleware
 
 go 1.18
 
