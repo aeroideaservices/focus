@@ -3,9 +3,10 @@ module github.com/aeroideaservices/focus/models/examples
 go 1.19
 
 require (
-	github.com/aeroideaservices/focus/services/db/db_types v1.0.0
-	github.com/google/uuid v1.4.0
-	gorm.io/gorm v1.25.5
+	github.com/google/uuid v1.3.0
+	github.com/aeroideaservices/focus/media/plugin v1.0.0
+	github.com/aeroideaservices/focus/services/db/db_types v0.0.8
+	gorm.io/gorm v1.23.8
 )
 
 require (
