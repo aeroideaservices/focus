@@ -15,6 +15,10 @@ import (
 	"github.com/aeroideaservices/focus/services/errors"
 )
 
+const (
+	maxFileSize = 204857600
+)
+
 // Medias сервис работы с медиа
 type Medias struct {
 	callbacks.Callbacks
@@ -63,7 +67,7 @@ func (m Medias) List(ctx context.Context, dto ListMediasShorts) (*MediaShortList
 
 // Create создание медиа
 func (m Medias) Create(ctx context.Context, action CreateMedia) (*uuid.UUID, error) {
-	if action.Size > 10485760 {
+	if action.Size > maxFileSize {
 		return nil, ErrMaxFileSize
 	}
 
@@ -135,7 +139,7 @@ func (m Medias) Upload(ctx context.Context, dto CreateMedia) (string, error) {
 // UploadList загрузка нескольких медиа
 func (m Medias) UploadList(ctx context.Context, dto CreateMediasList) ([]uuid.UUID, error) {
 	for _, file := range dto.Files {
-		if file.Size > 10485760 {
+		if file.Size > maxFileSize {
 			return nil, ErrMaxFileSize
 		}
 	}
