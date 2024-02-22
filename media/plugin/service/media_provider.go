@@ -13,6 +13,7 @@ type MediaProvider struct {
 	folderRepository actions.FolderRepository
 	baseMediaUrl     url.URL
 	proxyMediaUrl    url.URL
+	cdnMediaUrl url.URL
 }
 
 // NewMediaProvider конструктор
@@ -21,12 +22,14 @@ func NewMediaProvider(
 	folderRepository actions.FolderRepository,
 	baseMediaUrl url.URL,
 	proxyMediaUrl url.URL,
+	cdnMediaUrl url.URL,
 ) *MediaProvider {
 	return &MediaProvider{
 		mediaRepository:  mediaRepository,
 		folderRepository: folderRepository,
 		baseMediaUrl:     baseMediaUrl,
 		proxyMediaUrl:    proxyMediaUrl,
+		cdnMediaUrl: cdnMediaUrl
 	}
 }
 
@@ -36,6 +39,12 @@ func (p MediaProvider) GetUrlByFilepath(mediaFilepath string) string {
 		p.proxyMediaUrl.Path += "/"
 		p.proxyMediaUrl.RawQuery += "file=" + mediaFilepath
 		return p.proxyMediaUrl.String()
+	}
+
+	if p.cdnMediaUrl.String() != "" {
+		p.cdnMediaUrl.Path += "/"
+		p.cdnMediaUrl.RawQuery += mediaFilepath
+		return p.cdnMediaUrl.String()
 	}
 
 	p.baseMediaUrl.Path += "/" + mediaFilepath
