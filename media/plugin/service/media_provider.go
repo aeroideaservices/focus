@@ -29,7 +29,7 @@ func NewMediaProvider(
 		folderRepository: folderRepository,
 		baseMediaUrl:     baseMediaUrl,
 		proxyMediaUrl:    proxyMediaUrl,
-		cdnMediaUrl: cdnMediaUrl
+		cdnMediaUrl: cdnMediaUrl,
 	}
 }
 
@@ -42,7 +42,7 @@ func (p MediaProvider) GetUrlByFilepath(mediaFilepath string) string {
 	}
 
 	if p.cdnMediaUrl.String() != "" {
-		var result url.Url
+		var result url.URL
 		result = p.cdnMediaUrl
 		result.Path += "/"
 		result.RawQuery += mediaFilepath
