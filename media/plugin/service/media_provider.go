@@ -42,9 +42,11 @@ func (p MediaProvider) GetUrlByFilepath(mediaFilepath string) string {
 	}
 
 	if p.cdnMediaUrl.String() != "" {
-		p.cdnMediaUrl.Path += "/"
-		p.cdnMediaUrl.RawQuery += mediaFilepath
-		return p.cdnMediaUrl.String()
+		var result url.Url
+		result = p.cdnMediaUrl
+		result.Path += "/"
+		result.RawQuery += mediaFilepath
+		return result.String()
 	}
 
 	p.baseMediaUrl.Path += "/" + mediaFilepath
