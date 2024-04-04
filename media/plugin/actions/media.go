@@ -85,14 +85,14 @@ func (m Medias) Create(ctx context.Context, action CreateMedia) (*uuid.UUID, err
 		}
 	}
 
-	hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
-		FolderId:     action.FolderId,
-		WithFolderId: true,
-		Filename:     action.Filename,
-	})
-	if hasMedia {
-		return nil, ErrMediaAlreadyExistsInFolder
-	}
+	// hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
+	// 	FolderId:     action.FolderId,
+	// 	WithFolderId: true,
+	// 	Filename:     action.Filename,
+	// })
+	// if hasMedia {
+	// 	return nil, ErrMediaAlreadyExistsInFolder
+	// }
 
 	mediaFilepath := filepath.Join(folderPath, action.Filename)
 	saveMediaFile := &UploadFile{
