@@ -53,6 +53,16 @@ func (r mediaRepository) HasByFilter(ctx context.Context, filter actions.MediaFi
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
+// HasByFilter проверка существования медиа по фильтру и возвращает id
+func (r mediaRepository) HasByFilterWithId(ctx context.Context, filter actions.MediaFilter) (bool, uuid.UUID) {
+	media := &entity.Media{}
+	db := r.db.WithContext(ctx).Select("id")
+	db = r.filterMedia(db, filter)
+	err := db.First(media).Error
+
+	return !errors.Is(err, gorm.ErrRecordNotFound), media.Id
+}
+
 // Get получение медиа по id
 func (r mediaRepository) Get(ctx context.Context, id uuid.UUID) (*entity.Media, error) {
 	media := &entity.Media{}

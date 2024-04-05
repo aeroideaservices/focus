@@ -96,6 +96,7 @@ type MediaFilter struct {
 type MediaRepository interface {
 	Has(ctx context.Context, id uuid.UUID) bool
 	HasByFilter(ctx context.Context, filter MediaFilter) bool
+	HasByFilterWithId(ctx context.Context, filter MediaFilter) (bool, uuid.UUID)
 	Create(ctx context.Context, medias ...entity2.Media) error
 	Get(ctx context.Context, id uuid.UUID) (*entity2.Media, error)
 	Update(ctx context.Context, medias ...*UpdateMediaDto) error

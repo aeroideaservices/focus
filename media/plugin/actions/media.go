@@ -85,14 +85,38 @@ func (m Medias) Create(ctx context.Context, action CreateMedia) (*uuid.UUID, err
 		}
 	}
 
-	// hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
-	// 	FolderId:     action.FolderId,
-	// 	WithFolderId: true,
-	// 	Filename:     action.Filename,
-	// })
-	// if hasMedia {
-	// 	return nil, ErrMediaAlreadyExistsInFolder
-	// }
+	hasMedia, mediaId := m.mediaRepository.HasByFilterWithId(ctx, MediaFilter{
+		FolderId:     action.FolderId,
+		WithFolderId: true,
+		Filename:     action.Filename,
+	})
+	if hasMedia {
+		mediaFilepath := filepath.Join(folderPath, action.Filename)
+		saveMediaFile := &UploadFile{
+			Key:         mediaFilepath,
+			ContentType: mime.TypeByExtension(filepath.Ext(action.Filename)),
+			File:        action.File,
+		}
+		err = m.storage.Upload(ctx, saveMediaFile)
+		if err != nil {
+			return nil, errors.NoType.Wrap(err, "error uploading media file")
+		}
+
+		// updateMediaDto := &UpdateMediaDto{
+		// 	Id:       mediaId,
+		// 	Name:     strings.TrimSuffix(action.Filename, filepath.Ext(action.Filename)),
+		// 	Filename: action.Filename,
+		// 	Filepath: mediaFilepath,
+		// 	FolderId: action.FolderId,
+		// }
+		// err = m.mediaRepository.Update(ctx, updateMediaDto)
+		// if err != nil {
+		// 	return errors.NoType.Wrap(err, "error updating media")
+		// }
+
+		return &mediaId, nil
+		// return nil, ErrMediaAlreadyExistsInFolder
+	}
 
 	mediaFilepath := filepath.Join(folderPath, action.Filename)
 	saveMediaFile := &UploadFile{
