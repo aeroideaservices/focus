@@ -1,4 +1,4 @@
-module focus/page/postgres
+module github.com/jemzee04/focus/page/postgres
 
 go 1.21.7
 

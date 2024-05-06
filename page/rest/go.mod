@@ -1,4 +1,4 @@
-module focus/page/rest
+module github.com/jemzee04/focus/page/rest
 
 go 1.21.7
 
