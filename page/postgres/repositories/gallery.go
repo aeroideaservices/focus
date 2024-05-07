@@ -3,11 +3,11 @@ package repositories
 import (
 	"context"
 	media_entity "github.com/aeroideaservices/focus/media/plugin/entity"
+	"github.com/aeroideaservices/focus/page/plugin/actions"
+	"github.com/aeroideaservices/focus/page/plugin/entity"
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jemzee04/focus/page/plugin/actions"
-	"github.com/jemzee04/focus/page/plugin/entity"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"sort"

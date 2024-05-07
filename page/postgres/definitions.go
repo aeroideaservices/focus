@@ -2,7 +2,7 @@ package postgres
 
 import (
 	"fmt"
-	"github.com/jemzee04/focus/page/postgres/repositories"
+	"github.com/aeroideaservices/focus/page/postgres/repositories"
 	"github.com/sarulabs/di/v2"
 	"gorm.io/gorm"
 )

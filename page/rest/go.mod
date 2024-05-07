@@ -8,8 +8,6 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.5.5
-	github.com/jemzee04/focus/page/plugin v0.0.0-20240506234836-90b4eebd548e
-	github.com/jemzee04/focus/page/rest v0.0.0-20240506234836-90b4eebd548e
 	github.com/sarulabs/di/v2 v2.4.2
 	gitlab.aeroidea.ru/internal-projects/focus/services/errors v0.2.1
 )

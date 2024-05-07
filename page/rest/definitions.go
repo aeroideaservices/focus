@@ -1,10 +1,10 @@
 package rest
 
 import (
+	"github.com/aeroideaservices/focus/page/plugin/actions"
+	"github.com/aeroideaservices/focus/page/rest/handlers"
+	"github.com/aeroideaservices/focus/page/rest/services"
 	middleware "github.com/aeroideaservices/focus/services/gin-middleware"
-	"github.com/jemzee04/focus/page/plugin/actions"
-	"github.com/jemzee04/focus/page/rest/handlers"
-	"github.com/jemzee04/focus/page/rest/services"
 	"github.com/sarulabs/di/v2"
 )
 

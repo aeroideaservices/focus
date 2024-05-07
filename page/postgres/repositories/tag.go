@@ -2,9 +2,9 @@ package repositories
 
 import (
 	"context"
+	"github.com/aeroideaservices/focus/page/plugin/entity"
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
-	"github.com/jemzee04/focus/page/plugin/entity"
 	"gorm.io/gorm"
 )
 

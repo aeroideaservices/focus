@@ -3,9 +3,9 @@ package repositories
 import (
 	"context"
 	"github.com/aeroideaservices/focus/media/plugin/entity"
+	user_entity "github.com/aeroideaservices/focus/page/plugin/entity"
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
-	user_entity "github.com/jemzee04/focus/page/plugin/entity"
 	"gorm.io/gorm"
 )
 

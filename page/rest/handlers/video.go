@@ -1,11 +1,11 @@
 package handlers
 
 import (
+	"github.com/aeroideaservices/focus/page/plugin/actions"
+	"github.com/aeroideaservices/focus/page/rest/services"
 	middleware "github.com/aeroideaservices/focus/services/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jemzee04/focus/page/plugin/actions"
-	"github.com/jemzee04/focus/page/rest/services"
 	"gitlab.aeroidea.ru/internal-projects/focus/services/errors"
 	"net/http"
 )

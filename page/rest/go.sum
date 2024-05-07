@@ -44,10 +44,6 @@ github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a h1:bbPeKD0xmW/
 github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a/go.mod h1:5TJZWKEWniPve33vlWYSoGYefn3gLQRzjfDlhSJ9ZKM=
 github.com/jackc/pgx/v5 v5.5.5 h1:amBjrZVmksIdNjxGW/IiIMzxMKZFelXbUoPNb+8sjQw=
 github.com/jackc/pgx/v5 v5.5.5/go.mod h1:ez9gk+OAat140fv9ErkZDYFWmXLfV+++K0uAOiwgm1A=
-github.com/jemzee04/focus/page/plugin v0.0.0-20240506234836-90b4eebd548e h1:e4GaEvKHZMkZSw5YaBBNwXc7XkJBQjGBVRbsGmCiHzk=
-github.com/jemzee04/focus/page/plugin v0.0.0-20240506234836-90b4eebd548e/go.mod h1:Edsnhs240jO34G/J1z9VdjSev8p4UV7cIpSJki8Z2kE=
-github.com/jemzee04/focus/page/rest v0.0.0-20240506234836-90b4eebd548e h1:m5P+3Dam07GPcZmla+2387dm3hFNFcQLNdzlFXeKXHk=
-github.com/jemzee04/focus/page/rest v0.0.0-20240506234836-90b4eebd548e/go.mod h1:iHGpkt0Dyzxip7ME1QNT+jkAuZFfNUlbq25ByuACG0Q=
 github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
 github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
 github.com/jinzhu/now v1.1.4/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=

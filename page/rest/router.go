@@ -1,9 +1,9 @@
 package rest
 
 import (
+	"github.com/aeroideaservices/focus/page/rest/handlers"
+	"github.com/aeroideaservices/focus/page/rest/services"
 	"github.com/gin-gonic/gin"
-	"github.com/jemzee04/focus/page/rest/handlers"
-	"github.com/jemzee04/focus/page/rest/services"
 )
 
 type Router struct {
