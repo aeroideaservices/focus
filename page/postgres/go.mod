@@ -12,6 +12,7 @@ require (
 )
 
 require (
+	github.com/aeroideaservices/focus/page/plugin v0.0.0-20240507083811-328a57bb2cf0 // indirect
 	github.com/aeroideaservices/focus/services/callbacks v1.0.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect

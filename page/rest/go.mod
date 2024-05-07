@@ -14,7 +14,9 @@ require (
 
 require (
 	github.com/aeroideaservices/focus/media/plugin v1.0.3 // indirect
+	github.com/aeroideaservices/focus/page/plugin v0.0.0-20240507083811-328a57bb2cf0 // indirect
 	github.com/aeroideaservices/focus/services/callbacks v1.0.0 // indirect
+	github.com/aws/aws-sdk-go v1.38.20 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20221115062448-fe3a3abad311 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
@@ -25,8 +27,10 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
+	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
@@ -37,6 +41,8 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.8 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
+	github.com/u2takey/ffmpeg-go v0.5.0 // indirect
+	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	gitlab.aeroidea.ru/internal-projects/focus/forms/plugin v0.1.6 // indirect
 	gitlab.aeroidea.ru/internal-projects/focus/services/callbacks v0.0.0-20230629141952-05b1a3a45f3f // indirect
