@@ -2,9 +2,9 @@ package postgres
 
 import (
 	"fmt"
+	"github.com/jemzee04/focus/page/postgres/repositories"
 	"github.com/sarulabs/di/v2"
 	"gorm.io/gorm"
-	"pages/pkg/page/postgres/repositories"
 )
 
 var Definitions = []di.Def{

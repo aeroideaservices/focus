@@ -2,10 +2,11 @@ package plugin
 
 import (
 	media_usecase "github.com/aeroideaservices/focus/media/plugin/actions"
+	"github.com/aeroideaservices/focus/page/plugin/actions"
+	"github.com/aeroideaservices/focus/page/plugin/services"
 	"github.com/sarulabs/di/v2"
 	actions3 "gitlab.aeroidea.ru/internal-projects/focus/forms/plugin/actions"
 	//	helpers "gitlab.aeroidea.ru/platform/platformlib/go/lib/golang-helpers-lib"
-	"pages/pkg/page/plugin/actions"
 
 	"go.uber.org/zap"
 )

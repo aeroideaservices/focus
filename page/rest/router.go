@@ -2,8 +2,8 @@ package rest
 
 import (
 	"github.com/gin-gonic/gin"
-	"pages/pkg/page/rest/handlers"
-	"pages/pkg/page/rest/services"
+	"github.com/jemzee04/focus/page/rest/handlers"
+	"github.com/jemzee04/focus/page/rest/services"
 )
 
 type Router struct {

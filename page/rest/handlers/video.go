@@ -4,10 +4,10 @@ import (
 	middleware "github.com/aeroideaservices/focus/services/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jemzee04/focus/page/plugin/actions"
+	"github.com/jemzee04/focus/page/rest/services"
 	"gitlab.aeroidea.ru/internal-projects/focus/services/errors"
 	"net/http"
-	"pages/pkg/page/plugin/actions"
-	"pages/pkg/page/rest/services"
 )
 
 type VideoHandler struct {
@@ -53,12 +53,14 @@ func (h VideoHandler) Create(c *gin.Context) {
 		folderId = &id
 	}
 
-	resp, err := h.videoUseCase.Create(actions.CreateVideoRequest{
-		Filename: file.Filename,
-		Size:     file.Size,
-		FolderId: folderId,
-		File:     fo,
-	})
+	resp, err := h.videoUseCase.Create(
+		actions.CreateVideoRequest{
+			Filename: file.Filename,
+			Size:     file.Size,
+			FolderId: folderId,
+			File:     fo,
+		},
+	)
 	if err != nil {
 		_ = c.Error(errors.Internal.Wrap(err, "error creating video"))
 		return

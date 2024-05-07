@@ -5,9 +5,9 @@ import (
 	middleware "github.com/aeroideaservices/focus/services/gin-middleware"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/jemzee04/focus/page/plugin/actions"
+	"github.com/jemzee04/focus/page/rest/services"
 	"net/http"
-	"pages/pkg/page/plugin/actions"
-	"pages/pkg/page/rest/services"
 )
 
 type TagHandler struct {

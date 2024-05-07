@@ -5,8 +5,8 @@ import (
 	"github.com/aeroideaservices/focus/media/plugin/entity"
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
+	user_entity "github.com/jemzee04/focus/page/plugin/entity"
 	"gorm.io/gorm"
-	user_entity "pages/pkg/page/plugin/entity"
 )
 
 type UserRepository struct {

@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jemzee04/focus/page/plugin/actions"
+	"github.com/jemzee04/focus/page/rest/services"
 	"net/http"
-	"pages/pkg/page/plugin/actions"
-	"pages/pkg/page/rest/services"
 )
 
 type GalleryHandler struct {

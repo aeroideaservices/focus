@@ -12,7 +12,6 @@ type User struct {
 	Position  string        `focus:"title:Должность;filterable" validate:"required,min=1,max=50"`
 	PictureId *uuid.UUID    `focus:"-" validate:"-"`
 	Picture   *entity.Media `focus:"title:Картинки;media;hidden:list"`
-	//Image     Picture   `focus:"title:Аватар;view:select;viewExtra:pictureSelect" validate:"structonly,notBlank"`
 }
 
 func (User) TableName() string {

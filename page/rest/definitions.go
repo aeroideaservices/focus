@@ -2,10 +2,10 @@ package rest
 
 import (
 	middleware "github.com/aeroideaservices/focus/services/gin-middleware"
+	"github.com/jemzee04/focus/page/plugin/actions"
+	"github.com/jemzee04/focus/page/rest/handlers"
+	"github.com/jemzee04/focus/page/rest/services"
 	"github.com/sarulabs/di/v2"
-	"pages/pkg/page/plugin/actions"
-	"pages/pkg/page/rest/handlers"
-	"pages/pkg/page/rest/services"
 )
 
 var Definitions = []di.Def{

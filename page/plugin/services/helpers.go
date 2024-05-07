@@ -1,11 +1,8 @@
 package services
 
 import (
-	"github.com/aeroideaservices/focus/media/plugin/actions"
 	"github.com/google/uuid"
 	"github.com/jinzhu/copier"
-	"pages/internal/infrastructure/env"
-	"strings"
 )
 
 func GetIdsFromStrings(ids []string) ([]uuid.UUID, error) {
@@ -20,27 +17,27 @@ func GetIdsFromStrings(ids []string) ([]uuid.UUID, error) {
 	return result, nil
 }
 
-func GetUrlByFilePath(path string, mediaProvider actions.MediaProvider) string {
-	var url string
-
-	if env.CdnUrl != "" && !strings.Contains(
-		path, env.CdnUrl,
-	) {
-		url = strings.Replace(
-			mediaProvider.GetUrlByFilepath(path), "?", "", 1,
-		)
-		return url
-	}
-	if env.CdnUrl == "" && !strings.Contains(
-		path, env.AwsEndpoint+"/"+env.AwsBucket,
-	) {
-		url = strings.Replace(
-			mediaProvider.GetUrlByFilepath(path), "?", "", 1,
-		)
-		return url
-	}
-	return path
-}
+//func GetUrlByFilePath(path string, mediaProvider actions.MediaProvider) string {
+//	var url string
+//
+//	if env.CdnUrl != "" && !strings.Contains(
+//		path, env.CdnUrl,
+//	) {
+//		url = strings.Replace(
+//			mediaProvider.GetUrlByFilepath(path), "?", "", 1,
+//		)
+//		return url
+//	}
+//	if env.CdnUrl == "" && !strings.Contains(
+//		path, env.AwsEndpoint+"/"+env.AwsBucket,
+//	) {
+//		url = strings.Replace(
+//			mediaProvider.GetUrlByFilepath(path), "?", "", 1,
+//		)
+//		return url
+//	}
+//	return path
+//}
 
 type Copier struct{}
 

@@ -3,11 +3,11 @@ package actions
 import (
 	"context"
 	"github.com/aeroideaservices/focus/media/plugin/actions"
+	"github.com/aeroideaservices/focus/page/plugin/entity"
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
 	actions2 "gitlab.aeroidea.ru/internal-projects/focus/forms/plugin/actions"
 	"go.uber.org/zap"
-	"pages/pkg/page/plugin/entity"
 )
 
 type CardUseCase struct {
@@ -36,7 +36,9 @@ func NewCardUseCase(
 	}
 }
 
-func (uc CardUseCase) GetListWithSearch(ctx context.Context, searchValue string, name string) ([]CardDtoWithoutPosition, error) {
+func (uc CardUseCase) GetListWithSearch(ctx context.Context, searchValue string, name string) (
+	[]CardDtoWithoutPosition, error,
+) {
 	uc.logger.Debug("Getting list cards with search")
 	cards, err := uc.cardRepository.GetListWithSearch(ctx, searchValue, name)
 	if err != nil {

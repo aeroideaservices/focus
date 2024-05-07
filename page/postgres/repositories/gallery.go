@@ -6,10 +6,10 @@ import (
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jemzee04/focus/page/plugin/actions"
+	"github.com/jemzee04/focus/page/plugin/entity"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"pages/pkg/page/plugin/actions"
-	"pages/pkg/page/plugin/entity"
 	"sort"
 )
 

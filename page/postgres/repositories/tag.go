@@ -4,8 +4,8 @@ import (
 	"context"
 	"github.com/aeroideaservices/focus/services/errors"
 	"github.com/google/uuid"
+	"github.com/jemzee04/focus/page/plugin/entity"
 	"gorm.io/gorm"
-	"pages/pkg/page/plugin/entity"
 )
 
 type TagRepository struct {

@@ -2,9 +2,9 @@ package actions
 
 import (
 	"context"
+	"github.com/aeroideaservices/focus/page/plugin/entity"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-	"pages/pkg/page/plugin/entity"
 )
 
 type GalleryUseCase struct {

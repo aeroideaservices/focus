@@ -2,8 +2,8 @@ package actions
 
 import (
 	"context"
+	"github.com/aeroideaservices/focus/page/plugin/entity"
 	"github.com/google/uuid"
-	"pages/pkg/page/plugin/entity"
 )
 
 type PageRepository interface {

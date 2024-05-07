@@ -1,4 +1,4 @@
-module github.com/jemzee04/focus/page/plugin
+module github.com/aeroideaservices/focus/page/plugin
 
 go 1.21.7
 
