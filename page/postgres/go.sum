@@ -1,5 +1,7 @@
 github.com/aeroideaservices/focus/media/plugin v1.0.3 h1:ntXspYy1RX+t6QVLtG3V5E0LXk/0QXK5v/T938UZ0rY=
 github.com/aeroideaservices/focus/media/plugin v1.0.3/go.mod h1:lP8r6ICzV9OAsPyEM86WKMdxqAWH4jO6f4G+nDWpc34=
+github.com/aeroideaservices/focus/page/plugin v0.0.0-20240507083811-328a57bb2cf0 h1:y5Lef0Pm2EdPZf1rtSEepAjf9epaEARn2kQR1IIOEkU=
+github.com/aeroideaservices/focus/page/plugin v0.0.0-20240507083811-328a57bb2cf0/go.mod h1:dUkKn+N3/k7/YY2ZtAbl6snAwf89kttcFjx2VrLLu4o=
 github.com/aeroideaservices/focus/services/callbacks v1.0.0 h1:MTZn1nMqU5vTitzGqswWGWOoeaFwyBM/tRTR78y2lHo=
 github.com/aeroideaservices/focus/services/callbacks v1.0.0/go.mod h1:ijhfnIgW6BVA3dB8F0b+PtnkXwWUiUeSNt6rcBFFASg=
 github.com/aeroideaservices/focus/services/errors v1.0.0 h1:glRyq4LCjO18nS+DHWITTvnFs4xNqe3zFyPPbfpjCmw=
