@@ -70,7 +70,7 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 		return nil, err
 	}
 
-	if len(ids) != 4 {
+	if len(ids) != 3 {
 		return nil, fmt.Errorf("error uploading medias")
 	}
 
