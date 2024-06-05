@@ -77,8 +77,8 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 	return &CreateVideoResponse{
 		VideoId: ids[0],
 		//VideoLiteId:      ids[1],
-		PreviewId:        ids[2],
-		PreviewBlurredId: ids[3],
+		PreviewId:        ids[1],
+		PreviewBlurredId: ids[2],
 	}, nil
 }
 
