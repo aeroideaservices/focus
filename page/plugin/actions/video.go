@@ -48,11 +48,11 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 					Size:     request.Size,
 					File:     request.File,
 				},
-				{
-					Filename: fileTitle + "_compressed" + fileExt,
-					Size:     videoSamples.CompressedVideo.Size(),
-					File:     videoSamples.CompressedVideo,
-				},
+				//{
+				//	Filename: fileTitle + "_compressed" + fileExt,
+				//	Size:     videoSamples.CompressedVideo.Size(),
+				//	File:     videoSamples.CompressedVideo,
+				//},
 				{
 					Filename: fileTitle + "_preview" + ".jpg",
 					Size:     videoSamples.Preview.Size(),
@@ -75,8 +75,8 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 	}
 
 	return &CreateVideoResponse{
-		VideoId:          ids[0],
-		VideoLiteId:      ids[1],
+		VideoId: ids[0],
+		//VideoLiteId:      ids[1],
 		PreviewId:        ids[2],
 		PreviewBlurredId: ids[3],
 	}, nil
@@ -103,20 +103,20 @@ func (uc VideoUseCase) createVideoSamples(video io.ReadSeeker) (*VideoSamples, e
 		return nil, err
 	}
 
-	uc.logger.Debug("Creating compressed video")
-	compressed, err := services.CompressVideo(video)
-	if err != nil {
-		return nil, err
-	}
-	_, err = video.Seek(0, io.SeekStart)
-	if err != nil {
-		return nil, err
-	}
+	//uc.logger.Debug("Creating compressed video")
+	//compressed, err := services.CompressVideo(video)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//_, err = video.Seek(0, io.SeekStart)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	return &VideoSamples{
-		CompressedVideo: compressed,
-		PreviewBlurred:  blurred,
-		Preview:         preview,
+		//CompressedVideo: compressed,
+		PreviewBlurred: blurred,
+		Preview:        preview,
 	}, nil
 }
 
