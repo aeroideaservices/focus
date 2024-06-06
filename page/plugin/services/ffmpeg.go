@@ -4,25 +4,26 @@ import (
 	"bytes"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"io"
+	"os"
 	"strconv"
 )
 
-func GetNFrameBlurred(in io.Reader, frameNum int, blurRatio int) (*bytes.Reader, error) {
+func GetNFrameBlurred(fname string, frameNum int, blurRatio int) (*bytes.Reader, error) {
 	buf := bytes.NewBuffer(nil)
-	err := ffmpeg.Input("pipe:").
-		WithInput(in).
+	err := ffmpeg.Input("file:"+fname).
 		Output("pipe:", ffmpeg.KwArgs{"vframes": frameNum, "f": "image2", "vf": "gblur=sigma=" + strconv.Itoa(blurRatio)}).
 		WithOutput(buf).
+		WithErrorOutput(os.Stdout).
 		Run()
 	return bytes.NewReader(buf.Bytes()), err
 }
 
-func GetNFrame(in io.Reader, frameNum int) (*bytes.Reader, error) {
+func GetNFrame(fname string, frameNum int) (*bytes.Reader, error) {
 	buf := bytes.NewBuffer(nil)
-	err := ffmpeg.Input("pipe:").
-		WithInput(in).
+	err := ffmpeg.Input("file:"+fname).
 		Output("pipe:", ffmpeg.KwArgs{"vframes": frameNum, "f": "image2"}).
 		WithOutput(buf).
+		WithErrorOutput(os.Stdout).
 		Run()
 	return bytes.NewReader(buf.Bytes()), err
 }
