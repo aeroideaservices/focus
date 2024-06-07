@@ -212,7 +212,7 @@ func (m Medias) UploadList(ctx context.Context, dto CreateMediasList) ([]uuid.UU
 		return nil, errors.NoType.Wrap(err, "error uploading media file")
 	}
 
-	entities := make([]entity.Media, len(dto.Files))
+	entities := make([]entity.Media, 0)
 	ids := make([]uuid.UUID, len(dto.Files))
 	for i, f := range dto.Files {
 		hasMedia, mediaId := m.mediaRepository.HasByFilterWithId(
@@ -227,19 +227,24 @@ func (m Medias) UploadList(ctx context.Context, dto CreateMediasList) ([]uuid.UU
 		} else {
 			newId := uuid.New()
 			ids[i] = newId
-			entities[i] = entity.Media{
-				Id:       newId,
-				Name:     strings.TrimSuffix(f.Filename, filepath.Ext(f.Filename)),
-				Filename: f.Filename,
-				Size:     f.Size,
-				Filepath: createMediaFiles[i].Key,
-				FolderId: dto.FolderId,
-			}
+			entities = append(
+				entities, entity.Media{
+					Id:       newId,
+					Name:     strings.TrimSuffix(f.Filename, filepath.Ext(f.Filename)),
+					Filename: f.Filename,
+					Size:     f.Size,
+					Filepath: createMediaFiles[i].Key,
+					FolderId: dto.FolderId,
+				},
+			)
 		}
 	}
-	err = m.mediaRepository.Create(ctx, entities...)
-	if err != nil {
-		return nil, errors.NoType.Wrap(err, "error creating medias")
+
+	if len(entities) != 0 {
+		err = m.mediaRepository.Create(ctx, entities...)
+		if err != nil {
+			return nil, errors.NoType.Wrap(err, "error creating medias")
+		}
 	}
 
 	m.GoAfterCreate(ids...)
