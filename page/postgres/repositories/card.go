@@ -371,6 +371,10 @@ func (r *CardRepository) createCard(tx *gorm.DB, card *entity.Card) error {
 func (r *CardRepository) Update(
 	ctx context.Context, card *entity.Card, galleriesCards []entity.GalleriesCards,
 ) error {
+	internalCardId, err := r.getInternalId(ctx, card)
+	if err != nil {
+		return err
+	}
 
 	switch card.Type {
 	default:
@@ -382,39 +386,41 @@ func (r *CardRepository) Update(
 			return err
 		}
 
-	//case "html":
-	//	err := r.db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).
-	//		Updates(
-	//			card,
-	//		).Error
-	//	if err != nil {
-	//		return err
-	//	}
-	//case "video":
-	//	err := r.db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).
-	//		Updates(
-	//			card,
-	//		).Error
-	//	if err != nil {
-	//		return err
-	//	}
-	//case "photo":
-	//	err := r.db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).
-	//		Updates(
-	//			card,
-	//		).Error
-	//	if err != nil {
-	//		return err
-	//	}
-	case "form":
-		var formCardId string
-		err := r.db.WithContext(ctx).Select("form_card_id").Model(entity.Card{}).Where("id = ?", card.ID).
-			Find(&formCardId).Error
+	case "html":
+		card.HtmlCard.ID = uuid.Must(uuid.Parse(internalCardId))
+		card.HtmlCardId = &card.HtmlCard.ID
+
+		err = r.db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).
+			Updates(
+				card,
+			).Error
 		if err != nil {
 			return err
 		}
+	case "video":
+		card.VideoCard.ID = uuid.Must(uuid.Parse(internalCardId))
+		card.VideoCardId = &card.VideoCard.ID
 
-		card.FormCard.ID = uuid.Must(uuid.Parse(formCardId))
+		err = r.db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).
+			Updates(
+				card,
+			).Error
+		if err != nil {
+			return err
+		}
+	case "photo":
+		card.PhotoCard.ID = uuid.Must(uuid.Parse(internalCardId))
+		card.PhotoCardId = &card.PhotoCard.ID
+
+		err = r.db.WithContext(ctx).Session(&gorm.Session{FullSaveAssociations: true}).
+			Updates(
+				card,
+			).Error
+		if err != nil {
+			return err
+		}
+	case "form":
+		card.FormCard.ID = uuid.Must(uuid.Parse(internalCardId))
 		card.FormCardId = &card.FormCard.ID
 
 		for i, _ := range card.FormCard.FormCardsTags {
@@ -438,14 +444,7 @@ func (r *CardRepository) Update(
 		err = r.db.WithContext(ctx).Omit(clause.Associations).Create(card.FormCard.FormCardsTags).Error
 
 	case "regular":
-		var regularCardId string
-		err := r.db.WithContext(ctx).Select("regular_card_id").Model(entity.Card{}).Where("id = ?", card.ID).
-			Find(&regularCardId).Error
-		if err != nil {
-			return err
-		}
-
-		card.RegularCard.ID = uuid.Must(uuid.Parse(regularCardId))
+		card.RegularCard.ID = uuid.Must(uuid.Parse(internalCardId))
 		card.RegularCardId = &card.RegularCard.ID
 
 		for i, _ := range card.RegularCard.RegularCardsTags {
@@ -481,6 +480,17 @@ func (r *CardRepository) Update(
 	//err = r.db.WithContext(ctx).Omit(clause.Associations).Create(card.RegularCard.RegularCardsTags).Error
 
 	return nil
+}
+
+func (r *CardRepository) getInternalId(ctx context.Context, card *entity.Card) (string, error) {
+	var htmlCardId string
+	selectString := card.Type + "_card_id"
+	err := r.db.WithContext(ctx).Select(selectString).Model(entity.Card{}).Where("id = ?", card.ID).
+		Find(&htmlCardId).Error
+	if err != nil {
+		return "", err
+	}
+	return htmlCardId, err
 }
 
 func (r *CardRepository) Delete(ctx context.Context, cardId uuid.UUID) error {
