@@ -85,11 +85,13 @@ func (m Medias) Create(ctx context.Context, action CreateMedia) (*uuid.UUID, err
 		}
 	}
 
-	hasMedia, mediaId := m.mediaRepository.HasByFilterWithId(ctx, MediaFilter{
-		FolderId:     action.FolderId,
-		WithFolderId: true,
-		Filename:     action.Filename,
-	})
+	hasMedia, mediaId := m.mediaRepository.HasByFilterWithId(
+		ctx, MediaFilter{
+			FolderId:     action.FolderId,
+			WithFolderId: true,
+			Filename:     action.Filename,
+		},
+	)
 	if hasMedia {
 		mediaFilepath := filepath.Join(folderPath, action.Filename)
 		saveMediaFile := &UploadFile{
@@ -187,14 +189,14 @@ func (m Medias) UploadList(ctx context.Context, dto CreateMediasList) ([]uuid.UU
 		filenames[i] = file.Filename
 	}
 
-	hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
-		FolderId:     dto.FolderId,
-		WithFolderId: true,
-		Filenames:    filenames,
-	})
-	if hasMedia {
-		return nil, ErrMediaAlreadyExistsInFolder
-	}
+	//hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
+	//	FolderId:     dto.FolderId,
+	//	WithFolderId: true,
+	//	Filenames:    filenames,
+	//})
+	//if hasMedia {
+	//	return nil, ErrMediaAlreadyExistsInFolder
+	//}
 
 	createMediaFiles := make([]UploadFile, len(dto.Files))
 	for i, file := range dto.Files {
@@ -213,15 +215,26 @@ func (m Medias) UploadList(ctx context.Context, dto CreateMediasList) ([]uuid.UU
 	entities := make([]entity.Media, len(dto.Files))
 	ids := make([]uuid.UUID, len(dto.Files))
 	for i, f := range dto.Files {
-		newId := uuid.New()
-		ids[i] = newId
-		entities[i] = entity.Media{
-			Id:       newId,
-			Name:     strings.TrimSuffix(f.Filename, filepath.Ext(f.Filename)),
-			Filename: f.Filename,
-			Size:     f.Size,
-			Filepath: createMediaFiles[i].Key,
-			FolderId: dto.FolderId,
+		hasMedia, mediaId := m.mediaRepository.HasByFilterWithId(
+			ctx, MediaFilter{
+				FolderId:     dto.FolderId,
+				WithFolderId: true,
+				Filename:     f.Filename,
+			},
+		)
+		if hasMedia {
+			ids[i] = mediaId
+		} else {
+			newId := uuid.New()
+			ids[i] = newId
+			entities[i] = entity.Media{
+				Id:       newId,
+				Name:     strings.TrimSuffix(f.Filename, filepath.Ext(f.Filename)),
+				Filename: f.Filename,
+				Size:     f.Size,
+				Filepath: createMediaFiles[i].Key,
+				FolderId: dto.FolderId,
+			}
 		}
 	}
 	err = m.mediaRepository.Create(ctx, entities...)
@@ -276,11 +289,13 @@ func (m Medias) Rename(ctx context.Context, dto RenameMedia) error {
 	}
 
 	newFilename := dto.Name + filepath.Ext(media.Filename)
-	hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
-		Filename:     newFilename,
-		FolderId:     media.FolderId,
-		WithFolderId: true,
-	})
+	hasMedia := m.mediaRepository.HasByFilter(
+		ctx, MediaFilter{
+			Filename:     newFilename,
+			FolderId:     media.FolderId,
+			WithFolderId: true,
+		},
+	)
 	if hasMedia {
 		return ErrMediaAlreadyExistsInFolder
 	}
@@ -332,11 +347,13 @@ func (m Medias) Move(ctx context.Context, dto MoveMedia) error {
 		}
 	}
 
-	hasMedia := m.mediaRepository.HasByFilter(ctx, MediaFilter{
-		Filename:     media.Filename,
-		FolderId:     dto.FolderId,
-		WithFolderId: true,
-	})
+	hasMedia := m.mediaRepository.HasByFilter(
+		ctx, MediaFilter{
+			Filename:     media.Filename,
+			FolderId:     dto.FolderId,
+			WithFolderId: true,
+		},
+	)
 	if hasMedia {
 		return ErrMediaAlreadyExistsInFolder
 	}
