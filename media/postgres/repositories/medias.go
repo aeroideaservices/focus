@@ -53,7 +53,7 @@ func (r mediaRepository) HasByFilter(ctx context.Context, filter actions.MediaFi
 	return !errors.Is(err, gorm.ErrRecordNotFound)
 }
 
-// HasByFilter проверка существования медиа по фильтру и возвращает id
+// HasByFilterWithId проверка существования медиа по фильтру и возвращает id
 func (r mediaRepository) HasByFilterWithId(ctx context.Context, filter actions.MediaFilter) (bool, uuid.UUID) {
 	media := &entity.Media{}
 	db := r.db.WithContext(ctx).Select("id")
@@ -87,12 +87,14 @@ func (r mediaRepository) Update(ctx context.Context, medias ...*actions.UpdateMe
 	}
 
 	err := r.db.WithContext(ctx).
-		Exec("WITH values (id, name, filepath, filename, folder_id)"+
-			" AS (VALUES "+strings.Join(mediasTemplate, ", ")+")"+
-			" UPDATE media"+
-			" SET (name, filepath, filename, folder_id) = (v.name, v.filepath, v.filename, v.folder_id)"+
-			" FROM values as v"+
-			" WHERE v.id = media.id", mediasValues...).Error
+		Exec(
+			"WITH values (id, name, filepath, filename, folder_id)"+
+				" AS (VALUES "+strings.Join(mediasTemplate, ", ")+")"+
+				" UPDATE media"+
+				" SET (name, filepath, filename, folder_id) = (v.name, v.filepath, v.filename, v.folder_id)"+
+				" FROM values as v"+
+				" WHERE v.id = media.id", mediasValues...,
+		).Error
 	if err != nil {
 		return errors.NoType.Wrap(err, "error updating medias")
 	}
