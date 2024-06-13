@@ -2,6 +2,7 @@ package actions
 
 import (
 	"context"
+	"github.com/aeroideaservices/focus/services/db/db_types/json"
 	"io"
 
 	"github.com/google/uuid"
@@ -103,6 +104,8 @@ type MediaRepository interface {
 	Delete(ctx context.Context, ids ...uuid.UUID) error
 	GetShortList(ctx context.Context, ids []uuid.UUID) ([]entity2.Media, error)
 	Count(ctx context.Context, filter MediaFilter) (int, error)
+
+	UpdateSubtitles(ctx context.Context, id uuid.UUID, subtitles json.JSONB) error
 }
 
 type UploadFile struct {
@@ -117,6 +120,7 @@ type FileStorage interface {
 	Delete(ctx context.Context, keys ...string) error
 	Move(ctx context.Context, oldKey string, newKey string) error
 	GetSize(ctx context.Context, key string) (int64, error)
+	DownloadFile(ctx context.Context, key string, fileName string) error
 }
 
 type MediaProvider interface {

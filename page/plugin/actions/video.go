@@ -3,15 +3,19 @@ package actions
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	mediaActions "github.com/aeroideaservices/focus/media/plugin/actions"
 	"github.com/aeroideaservices/focus/page/plugin/services"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"io"
+	"io/ioutil"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 type VideoUseCase struct {
@@ -41,31 +45,33 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 	uc.logger.Debug("Uploading medias", "fileName", request.Filename)
 	fileExt := filepath.Ext(request.Filename)
 	fileTitle := strings.TrimSuffix(request.Filename, fileExt)
-	ids, err := uc.medias.UploadList(ctx, mediaActions.CreateMediasList{
-		FolderId: request.FolderId,
-		Files: []mediaActions.MediaFile{
-			{
-				Filename: request.Filename,
-				Size:     request.Size,
-				File:     request.File,
-			},
-			//{
-			//	Filename: fileTitle + "_compressed" + fileExt,
-			//	Size:     videoSamples.CompressedVideo.Size(),
-			//	File:     videoSamples.CompressedVideo,
-			//},
-			{
-				Filename: fileTitle + "_preview" + ".jpg",
-				Size:     videoSamples.Preview.Size(),
-				File:     videoSamples.Preview,
-			},
-			{
-				Filename: fileTitle + "_preview_blurred" + ".jpg",
-				Size:     videoSamples.PreviewBlurred.Size(),
-				File:     videoSamples.PreviewBlurred,
+	ids, err := uc.medias.UploadList(
+		ctx, mediaActions.CreateMediasList{
+			FolderId: request.FolderId,
+			Files: []mediaActions.MediaFile{
+				{
+					Filename: request.Filename,
+					Size:     request.Size,
+					File:     request.File,
+				},
+				//{
+				//	Filename: fileTitle + "_compressed" + fileExt,
+				//	Size:     videoSamples.CompressedVideo.Size(),
+				//	File:     videoSamples.CompressedVideo,
+				//},
+				{
+					Filename: fileTitle + "_preview" + ".jpg",
+					Size:     videoSamples.Preview.Size(),
+					File:     videoSamples.Preview,
+				},
+				{
+					Filename: fileTitle + "_preview_blurred" + ".jpg",
+					Size:     videoSamples.PreviewBlurred.Size(),
+					File:     videoSamples.PreviewBlurred,
+				},
 			},
 		},
-	})
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +86,56 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 		PreviewId:        ids[1],
 		PreviewBlurredId: ids[2],
 	}, nil
+}
+
+func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UUID) error {
+
+	for _, id := range mediaIds {
+		// get file from s3
+		fileName, err := uc.medias.Download(ctx, mediaActions.GetMedia{Id: id})
+		if err != nil {
+			return err
+		}
+		defer func() {
+			os.Remove(fileName)
+		}()
+		//  get audio from video
+		audio, err := uc.getAudioFromVideo(fileName)
+
+		// save audio to s3
+		uri, err := uc.medias.Upload(
+			ctx, mediaActions.CreateMedia{
+				Filename: fileName,
+				Size:     audio.Size(),
+				File:     audio,
+			},
+		)
+
+		//  url of audio to yandex speech
+		operation, err := uc.requestYandexSpeech(uri)
+
+		if err != nil {
+			return err
+		}
+
+		operation, err = uc.getResultOfYandexSpeech(operation.Id)
+		if err != nil {
+			return err
+		}
+
+		updSubtitles := &mediaActions.UpdateMediaSubtitles{
+			Id:        id,
+			Subtitles: json.Marshal(operation),
+		}
+
+		err = uc.medias.UpdateSubtitles(ctx, updSubtitles)
+		if err != nil {
+			return err
+		}
+	}
+
+	// TODO: save subtitles to db
+	return nil
 }
 
 func (uc VideoUseCase) createVideoSamples(video io.ReadSeeker) (*VideoSamples, error) {
@@ -146,4 +202,101 @@ type VideoSamples struct {
 	CompressedVideo *bytes.Reader
 	PreviewBlurred  *bytes.Reader
 	Preview         *bytes.Reader
+}
+
+func (uc VideoUseCase) getAudioFromVideo(fname string) (*bytes.Reader, error) {
+	audio, err := services.GetAudioFromVideo(fname)
+	return audio, err
+}
+
+func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationResult, error) {
+	requestBody := RecognitionRequest{
+		Config: RecognitionConfig{
+			Specification: Specification{
+				ProfanityFilter: false,
+				LiteratureText:  true,
+				AudioEncoding:   "MP3",
+				RawResults:      false,
+			},
+		},
+		Audio: RecognitionAudio{
+			Uri: uri,
+		},
+	}
+
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		fmt.Println("Error marshalling request body:", err)
+		return nil, err
+	}
+
+	url := "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("ajemsgisc137iid6vork", "AQVN1uQlxgRnlJpv43S4jtdH5cgvtcjaVVq6zEFZ")
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	operation := &YandexSpeechOperationResult{}
+	err = json.Unmarshal(body, operation)
+	if err != nil {
+		return nil, err
+	}
+
+	return operation, nil
+}
+
+func (uc VideoUseCase) getResultOfYandexSpeech(id string) (*YandexSpeechOperationResult, error) {
+	url := "https://operation.api.cloud.yandex.net/operations/" + id
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", "Api-Key AQVN1uQlxgRnlJpv43S4jtdH5cgvtcjaVVq6zEFZ")
+	operation := &YandexSpeechOperationResult{}
+
+	for true {
+		time.Sleep(time.Second * 30)
+		res, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(body, operation)
+		if err != nil {
+			return nil, err
+		}
+		if operation.Done {
+			res.Body.Close()
+			return operation, nil
+		}
+		res.Body.Close()
+	}
+
+	return operation, nil
 }

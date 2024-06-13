@@ -421,3 +421,36 @@ func (m Medias) CheckIds(ctx context.Context, ids ...uuid.UUID) error {
 
 	return nil
 }
+
+func (m Medias) Download(ctx context.Context, dto GetMedia) (string, error) {
+	media, err := m.mediaRepository.Get(ctx, dto.Id)
+	if err != nil {
+		return "", errors.NoType.Wrap(err, "error getting media by id")
+	}
+	err = m.storage.DownloadFile(ctx, media.Filepath, media.Filename)
+	if err != nil {
+		return "", errors.NoType.Wrap(err, "error downloading media file")
+	}
+
+	return media.Filename, nil
+}
+
+func (m Medias) UpdateSubtitles(ctx context.Context, dto UpdateMediaSubtitles) error {
+
+	media, err := m.mediaRepository.Get(ctx, dto.Id)
+	if err != nil {
+		return errors.NoType.Wrap(err, "error getting media by id")
+	}
+	if media.Subtitles == dto.Subtitles {
+		return ErrMediaAlreadyHasSameSubtitles
+	}
+
+	err = m.mediaRepository.UpdateSubtitles(ctx, dto.Id, dto.Subtitles)
+	if err != nil {
+		return errors.NoType.Wrap(err, "error updating media")
+	}
+
+	m.GoAfterUpdate(media.Id)
+
+	return nil
+}

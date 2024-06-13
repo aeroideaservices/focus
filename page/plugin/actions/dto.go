@@ -4,6 +4,7 @@ import (
 	"github.com/aeroideaservices/focus/media/plugin/entity"
 	"github.com/google/uuid"
 	"io"
+	"time"
 )
 
 type PageDto struct {
@@ -395,4 +396,56 @@ type CreateVideoResponse struct {
 	VideoLiteId      uuid.UUID `json:"videoLiteId"`
 	PreviewId        uuid.UUID `json:"videoPreviewId"`
 	PreviewBlurredId uuid.UUID `json:"videoPreviewBlurId"`
+}
+
+type YandexSpeechOperationResult struct {
+	Done       bool                 `json:"done"`
+	Response   YandexSpeechResponse `json:"response"`
+	Id         string               `json:"id"`
+	CreatedAt  time.Time            `json:"createdAt"`
+	CreatedBy  string               `json:"createdBy"`
+	ModifiedAt time.Time            `json:"modifiedAt"`
+}
+
+type YandexSpeechResponse struct {
+	Type   string        `json:"@type"`
+	Chunks []interface{} `json:"chunks"`
+}
+
+type Chunk struct {
+	Alternatives []Alternative `json:"alternatives"`
+	ChannelTag   string        `json:"channelTag"`
+}
+
+type Alternative struct {
+	Words      []Word `json:"words"`
+	Text       string `json:"text"`
+	Confidence int    `json:"confidence"`
+}
+
+type Word struct {
+	StartTime  string `json:"startTime"`
+	EndTime    string `json:"endTime"`
+	Word       string `json:"word"`
+	Confidence int    `json:"confidence"`
+}
+
+type RecognitionRequest struct {
+	Config RecognitionConfig `json:"config"`
+	Audio  RecognitionAudio  `json:"audio"`
+}
+
+type RecognitionConfig struct {
+	Specification Specification `json:"specification"`
+}
+
+type Specification struct {
+	ProfanityFilter bool   `json:"profanityFilter"`
+	LiteratureText  bool   `json:"literature_text"`
+	AudioEncoding   string `json:"audioEncoding"`
+	RawResults      bool   `json:"rawResults"`
+}
+
+type RecognitionAudio struct {
+	Uri string `json:"uri"`
 }

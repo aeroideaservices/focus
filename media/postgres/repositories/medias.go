@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"fmt"
+	"github.com/aeroideaservices/focus/services/db/db_types/json"
 	"strings"
 
 	"github.com/google/uuid"
@@ -165,6 +166,18 @@ func (r mediaRepository) Count(ctx context.Context, filter actions.MediaFilter) 
 	}
 
 	return int(count), nil
+}
+
+func (r mediaRepository) UpdateSubtitles(ctx context.Context, mediaId uuid.UUID, subtitle json.JSONB) error {
+	err := r.db.WithContext(ctx).
+		Model(&entity.Media{}).
+		Where("id = ?", mediaId).
+		Update("subtitle", subtitle).
+		Error
+	if err != nil {
+		return errors.NoType.Wrap(err, "error updating media subtitle")
+	}
+	return nil
 }
 
 func getMediaFilterScopes(filter actions.MediaFilter) gormScope {

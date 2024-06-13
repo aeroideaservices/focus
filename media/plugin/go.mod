@@ -10,6 +10,7 @@ require (
 )
 
 require (
+	github.com/aeroideaservices/focus/services/db/db_types v1.0.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/testify v1.8.0 // indirect
 )

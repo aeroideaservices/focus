@@ -2,6 +2,7 @@ package actions
 
 import (
 	"github.com/aeroideaservices/focus/media/plugin/service/utils"
+	"github.com/aeroideaservices/focus/services/db/db_types/json"
 	"github.com/google/uuid"
 	"io"
 )
@@ -88,6 +89,11 @@ type MediaFile struct {
 type RenameMedia struct {
 	Id   uuid.UUID `validate:"required,notBlank"`
 	Name string    `validate:"required,notBlank,min=3,max=50" json:"name"`
+}
+
+type UpdateMediaSubtitles struct {
+	Id        uuid.UUID  `validate:"required,notBlank" json:"id"`
+	Subtitles json.JSONB `validate:"required" json:"subtitles"`
 }
 
 type MoveMedia struct {

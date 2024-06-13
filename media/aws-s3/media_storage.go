@@ -3,6 +3,9 @@ package s3
 import (
 	"context"
 	"fmt"
+	"io"
+	"log"
+	"os"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -33,12 +36,14 @@ func NewFileStorage(client *s3.Client, bucket string) (*fileStorage, error) {
 
 // Upload загрузка файла
 func (s fileStorage) Upload(ctx context.Context, media *actions.UploadFile) (err error) {
-	_, err = s.client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket:      aws.String(s.bucket),
-		Key:         aws.String(media.Key),
-		Body:        media.File,
-		ContentType: aws.String(media.ContentType),
-	})
+	_, err = s.client.PutObject(
+		ctx, &s3.PutObjectInput{
+			Bucket:      aws.String(s.bucket),
+			Key:         aws.String(media.Key),
+			Body:        media.File,
+			ContentType: aws.String(media.ContentType),
+		},
+	)
 
 	return errors.WithStack(err)
 }
@@ -70,11 +75,13 @@ func (s fileStorage) UploadList(ctx context.Context, medias ...actions.UploadFil
 
 // Move перемещение файла
 func (s fileStorage) Move(ctx context.Context, oldKey string, newKey string) error {
-	_, err := s.client.CopyObject(ctx, &s3.CopyObjectInput{
-		Bucket:     aws.String(s.bucket),
-		CopySource: aws.String(fmt.Sprintf("%s/%s", s.bucket, oldKey)),
-		Key:        aws.String(newKey),
-	})
+	_, err := s.client.CopyObject(
+		ctx, &s3.CopyObjectInput{
+			Bucket:     aws.String(s.bucket),
+			CopySource: aws.String(fmt.Sprintf("%s/%s", s.bucket, oldKey)),
+			Key:        aws.String(newKey),
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -94,22 +101,26 @@ func (s fileStorage) Delete(ctx context.Context, keys ...string) error {
 	for i, key := range keys {
 		objectIdentifiers[i] = types.ObjectIdentifier{Key: aws.String(key)}
 	}
-	_, err := s.client.DeleteObjects(ctx, &s3.DeleteObjectsInput{
-		Bucket: aws.String(s.bucket),
-		Delete: &types.Delete{
-			Objects: objectIdentifiers,
+	_, err := s.client.DeleteObjects(
+		ctx, &s3.DeleteObjectsInput{
+			Bucket: aws.String(s.bucket),
+			Delete: &types.Delete{
+				Objects: objectIdentifiers,
+			},
 		},
-	})
+	)
 
 	return errors.WithStack(err)
 }
 
 // GetSize получение размера файла
 func (s fileStorage) GetSize(ctx context.Context, key string) (int64, error) {
-	output, err := s.client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(s.bucket),
-		Key:    aws.String(key),
-	})
+	output, err := s.client.GetObject(
+		ctx, &s3.GetObjectInput{
+			Bucket: aws.String(s.bucket),
+			Key:    aws.String(key),
+		},
+	)
 	if err != nil {
 		return 0, errors.WithStack(err)
 	}
@@ -119,14 +130,42 @@ func (s fileStorage) GetSize(ctx context.Context, key string) (int64, error) {
 
 // GetSizeDeprecated deprecated
 func (s fileStorage) GetSizeDeprecated(ctx context.Context, key string) (int64, error) {
-	output, err := s.client.GetObjectAttributes(ctx, &s3.GetObjectAttributesInput{
-		Bucket:           aws.String(s.bucket),
-		Key:              aws.String(key),
-		ObjectAttributes: []types.ObjectAttributes{types.ObjectAttributesObjectSize},
-	})
+	output, err := s.client.GetObjectAttributes(
+		ctx, &s3.GetObjectAttributesInput{
+			Bucket:           aws.String(s.bucket),
+			Key:              aws.String(key),
+			ObjectAttributes: []types.ObjectAttributes{types.ObjectAttributesObjectSize},
+		},
+	)
 	if err != nil {
 		return 0, errors.WithStack(err)
 	}
 
 	return output.ObjectSize, nil
+}
+
+func (s fileStorage) DownloadFile(ctx context.Context, key string, fileName string) error {
+	result, err := s.client.GetObject(
+		ctx, &s3.GetObjectInput{
+			Bucket: aws.String(s.bucket),
+			Key:    aws.String(key),
+		},
+	)
+	if err != nil {
+		log.Printf("Couldn't get object %v:%v. Here's why: %v\n", s.bucket, key, err)
+		return err
+	}
+	defer result.Body.Close()
+	file, err := os.Create(fileName)
+	if err != nil {
+		log.Printf("Couldn't create file %v. Here's why: %v\n", fileName, err)
+		return err
+	}
+	defer file.Close()
+	body, err := io.ReadAll(result.Body)
+	if err != nil {
+		log.Printf("Couldn't read object body from %v. Here's why: %v\n", key, err)
+	}
+	_, err = file.Write(body)
+	return err
 }

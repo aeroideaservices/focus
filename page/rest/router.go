@@ -78,4 +78,5 @@ func (r *Router) SetRoutes(routerGroup *gin.RouterGroup) {
 	tags.DELETE("/:tag-id", r.tagHandler.Delete)
 
 	pages.POST("/video/upload", r.videoHandler.Create)
+	pages.POST("/video/generate/subtitles", r.videoHandler.GenerateSubtitles)
 }

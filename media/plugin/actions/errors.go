@@ -16,4 +16,6 @@ var (
 	ErrMediaNotFound              = errors.NotFound.New("media not found").T("media.not-found")
 	ErrOneOfMediasNotExists       = errors.BadRequest.New("some medias do not exist").T("media.not-exists")
 	ErrMaxFileSize                = errors.BadRequest.New("media file size too large").T("media.file.size")
+
+	ErrMediaAlreadyHasSameSubtitles = errors.BadRequest.New("media already has the same subtitles").T("media.update-subtitles-same-subtitles")
 )
