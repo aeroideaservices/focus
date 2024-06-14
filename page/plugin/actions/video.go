@@ -100,12 +100,12 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 			os.Remove(fileName)
 		}()
 		//  get audio from video
-		audio, err := uc.getAudioFromVideo(fileName)
+		audio, audioFN, err := uc.getAudioFromVideo(fileName)
 
 		// save audio to s3
 		uri, err := uc.medias.Upload(
 			ctx, mediaActions.CreateMedia{
-				Filename: fileName,
+				Filename: audioFN,
 				Size:     audio.Size(),
 				File:     audio,
 			},
@@ -213,9 +213,9 @@ type VideoSamples struct {
 	Preview         *bytes.Reader
 }
 
-func (uc VideoUseCase) getAudioFromVideo(fname string) (*bytes.Reader, error) {
-	audio, err := services.GetAudioFromVideo(fname)
-	return audio, err
+func (uc VideoUseCase) getAudioFromVideo(fname string) (*bytes.Reader, string, error) {
+	audio, audioFN, err := services.GetAudioFromVideo(fname)
+	return audio, audioFN, err
 }
 
 func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationResult, error) {

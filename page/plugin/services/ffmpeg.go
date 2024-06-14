@@ -1,6 +1,7 @@
 package services
 
 import (
+	"bufio"
 	"bytes"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 	"io"
@@ -55,8 +56,8 @@ func CompressVideo(in io.Reader) (*bytes.Reader, error) {
 	return bytes.NewReader(buf.Bytes()), err
 }
 
-func GetAudioFromVideo(fname string) (*bytes.Reader, error) {
-	audio := bytes.NewBuffer(nil)
+func GetAudioFromVideo(fname string) (*bytes.Reader, string, error) {
+	//audio := bytes.NewBuffer(nil)
 
 	outputFile := strings.ReplaceAll(fname, ".mp4", ".mp3")
 
@@ -64,6 +65,21 @@ func GetAudioFromVideo(fname string) (*bytes.Reader, error) {
 
 	err := ffmpeg.Input("file:"+fname).Output(
 		outputFile, ffmpeg.KwArgs{"q:a": 0, "map": "a"},
-	).WithOutput(audio).Run()
-	return bytes.NewReader(audio.Bytes()), err
+	).Run()
+
+	audioOs, err := os.Open(outputFile)
+
+	stat, err := audioOs.Stat()
+	if err != nil {
+		return nil, "", err
+	}
+
+	// Read the file into a byte slice
+	bs := make([]byte, stat.Size())
+	_, err = bufio.NewReader(audioOs).Read(bs)
+	if err != nil && err != io.EOF {
+		return nil, "", err
+	}
+
+	return bytes.NewReader(bs), outputFile, err
 }
