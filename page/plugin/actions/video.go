@@ -123,12 +123,17 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 			return err
 		}
 
-		updSubtitles := &mediaActions.UpdateMediaSubtitles{
-			Id:        id,
-			Subtitles: json.Marshal(operation),
+		subJson, err := json.Marshal(operation)
+		if err != nil {
+			return err
 		}
 
-		err = uc.medias.UpdateSubtitles(ctx, updSubtitles)
+		updSubtitles := &mediaActions.UpdateMediaSubtitles{
+			Id:        id,
+			Subtitles: subJson,
+		}
+
+		err = uc.medias.UpdateSubtitles(ctx, *updSubtitles)
 		if err != nil {
 			return err
 		}
