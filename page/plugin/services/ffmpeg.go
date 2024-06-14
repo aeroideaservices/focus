@@ -57,7 +57,7 @@ func CompressVideo(in io.Reader) (*bytes.Reader, error) {
 }
 
 func GetAudioFromVideo(fname string) (*bytes.Reader, string, error) {
-	//audio := bytes.NewBuffer(nil)
+	audio := bytes.NewBuffer(nil)
 
 	outputFile := strings.ReplaceAll(fname, ".mp4", ".mp3")
 
@@ -65,7 +65,7 @@ func GetAudioFromVideo(fname string) (*bytes.Reader, string, error) {
 
 	err := ffmpeg.Input("file:"+fname).Output(
 		outputFile, ffmpeg.KwArgs{"q:a": 0, "map": "a"},
-	).Run()
+	).WithOutput(audio).Run()
 
 	audioOs, err := os.Open(outputFile)
 
