@@ -96,11 +96,11 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 		if err != nil {
 			return err
 		}
-		defer func() {
-			os.Remove(fileName)
-		}()
-		//  get audio from video
+
+		// get audio from video
 		audio, audioFN, err := uc.getAudioFromVideo(fileName)
+
+		os.Remove(fileName)
 
 		// save audio to s3
 		uri, err := uc.medias.Upload(
@@ -110,6 +110,10 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 				File:     audio,
 			},
 		)
+
+		os.Remove(audioFN)
+
+		uri = "https://storage.yandexcloud.net/aerosite/audio_testcreatesub.mp3"
 
 		//  url of audio to yandex speech
 		operation, err := uc.requestYandexSpeech(uri)
