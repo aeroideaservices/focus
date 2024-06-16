@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	mediaActions "github.com/aeroideaservices/focus/media/plugin/actions"
 	"github.com/aeroideaservices/focus/page/plugin/services"
@@ -94,7 +95,12 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 		// get file from s3
 		fileName, err := uc.medias.Download(ctx, mediaActions.GetMedia{Id: id})
 		if err != nil {
+			os.Remove(fileName)
 			return err
+		}
+		if !strings.Contains(fileName, ".mp4") {
+			os.Remove(fileName)
+			return errors.New("only mp4 files are supported")
 		}
 
 		// get audio from video
@@ -113,7 +119,8 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 
 		os.Remove(audioFN)
 
-		uri = "https://storage.yandexcloud.net/aerosite/audio_testcreatesub.mp3"
+		//uri = "https://storage.yandexcloud.net/aerosite/audio_testcreatesub.mp3"
+		uri = "https://storage.yandexcloud.net/speechkittest404/audio_testcreatesub.mp3"
 
 		//  url of audio to yandex speech
 		operation, err := uc.requestYandexSpeech(uri)
@@ -251,7 +258,7 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("ajemsgisc137iid6vork", "AQVN1uQlxgRnlJpv43S4jtdH5cgvtcjaVVq6zEFZ")
+	req.Header.Add("ajecivs7c9aafdp32rt7", "AQVNzJf4diVKe3Ixb6ezRboT-tsf2HcWgYyVv167")
 
 	client := &http.Client{}
 	res, err := client.Do(req)
