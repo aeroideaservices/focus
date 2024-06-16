@@ -19,18 +19,26 @@ import (
 	"time"
 )
 
+const (
+	yandexSpeechUrl          = "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+	yandexSpeechOperationUrl = "https://operation.api.cloud.yandex.net/operations/"
+)
+
 type VideoUseCase struct {
-	medias *mediaActions.Medias
-	logger *zap.SugaredLogger
+	medias       *mediaActions.Medias
+	logger       *zap.SugaredLogger
+	yandexApiKey string
 }
 
 func NewVideoUseCase(
 	medias *mediaActions.Medias,
 	logger *zap.SugaredLogger,
+	yandexApiKey string,
 ) *VideoUseCase {
 	return &VideoUseCase{
-		medias: medias,
-		logger: logger,
+		medias:       medias,
+		logger:       logger,
+		yandexApiKey: yandexApiKey,
 	}
 }
 
@@ -258,7 +266,8 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 	}
 
 	req.Header.Add("Content-Type", "application/json")
-	req.Header.Add("ajecivs7c9aafdp32rt7", "AQVNzJf4diVKe3Ixb6ezRboT-tsf2HcWgYyVv167")
+	req.Header.Add("Authorization", "Api-Key "+uc.yandexApiKey)
+	//req.Header.Add("ajecivs7c9aafdp32rt7", "AQVNzJf4diVKe3Ixb6ezRboT-tsf2HcWgYyVv167")
 
 	client := &http.Client{}
 	res, err := client.Do(req)
@@ -292,7 +301,7 @@ func (uc VideoUseCase) getResultOfYandexSpeech(id string) (*YandexSpeechOperatio
 	if err != nil {
 		return nil, err
 	}
-	req.Header.Add("Authorization", "Api-Key AQVN1uQlxgRnlJpv43S4jtdH5cgvtcjaVVq6zEFZ")
+	req.Header.Add("Authorization", "Api-Key "+uc.yandexApiKey)
 	operation := &YandexSpeechOperationResult{}
 
 	for true {
