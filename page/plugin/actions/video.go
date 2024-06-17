@@ -24,6 +24,8 @@ const (
 	yandexSpeechUrl          = "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
 	yandexSpeechOperationUrl = "https://operation.api.cloud.yandex.net/operations/"
 	chunks                   = 20
+	audioEncoding            = "MP3"
+	videoFormats             = ".mp4"
 )
 
 type VideoUseCase struct {
@@ -108,9 +110,9 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 			os.Remove(fileName)
 			return err
 		}
-		if !strings.Contains(fileName, ".mp4") {
+		if !strings.Contains(videoFormats, filepath.Ext(fileName)) {
 			os.Remove(fileName)
-			return errors.New("only mp4 files are supported")
+			return errors.New("file is not video")
 		}
 
 		// get audio from video
@@ -165,8 +167,6 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 			return err
 		}
 	}
-
-	// TODO: save subtitles to db
 	return nil
 }
 
@@ -247,7 +247,7 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 			Specification: Specification{
 				ProfanityFilter: false,
 				LiteratureText:  true,
-				AudioEncoding:   "MP3",
+				AudioEncoding:   audioEncoding,
 				RawResults:      false,
 			},
 		},
@@ -262,7 +262,6 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 		return nil, err
 	}
 
-	//url := "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
 	req, err := http.NewRequest("POST", yandexSpeechUrl, bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
@@ -271,7 +270,6 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Api-Key "+uc.yandexApiKey)
-	//req.Header.Add("ajecivs7c9aafdp32rt7", "AQVNzJf4diVKe3Ixb6ezRboT-tsf2HcWgYyVv167")
 
 	client := &http.Client{}
 	res, err := client.Do(req)
@@ -349,7 +347,6 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 	chunkSize := int(math.Ceil(float64(len(operation.Response.Chunks[0].Alternatives[0].Words)) / float64(chunks)))
 
 	chunkIndex := 0
-	//wordIndex := 0
 
 	for i := 0; i < len(operation.Response.Chunks[0].Alternatives[0].Words); i += chunkSize {
 		end := i + chunkSize
