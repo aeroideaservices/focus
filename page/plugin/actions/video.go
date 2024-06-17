@@ -129,9 +129,6 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 
 		os.Remove(audioFN)
 
-		//uri = "https://storage.yandexcloud.net/aerosite/audio_testcreatesub.mp3"
-		uri = "https://storage.yandexcloud.net/speechkittest404/audio_testcreatesub.mp3"
-
 		//  url of audio to yandex speech
 		operation, err := uc.requestYandexSpeech(uri)
 
