@@ -362,8 +362,8 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 		startTime := operation.Response.Chunks[0].Alternatives[0].Words[i].StartTime
 		endTime := operation.Response.Chunks[0].Alternatives[0].Words[end-1].EndTime
 		chunkText := ""
-		for j := i; j < i+chunkSize; j++ {
-			chunkText += operation.Response.Chunks[0].Alternatives[0].Words[i+j].Word + " "
+		for j := i; j < end; j++ {
+			chunkText += operation.Response.Chunks[0].Alternatives[0].Words[j].Word + " "
 		}
 
 		result.Chunks[chunkIndex] = ChunkToSave{
