@@ -1,9 +1,9 @@
 package entity
 
 import (
-	"time"
-
+	"github.com/aeroideaservices/focus/services/db/db_types/json"
 	"github.com/google/uuid"
+	"time"
 )
 
 type Media struct {
@@ -17,6 +17,8 @@ type Media struct {
 	CreatedAt time.Time  `json:"createdAt"`
 	UpdatedAt time.Time  `json:"updatedAt"`
 	FolderId  *uuid.UUID `json:"folderId" gorm:"type:uuid"`
+
+	Subtitles json.JSONB `json:"subtitles"`
 }
 
 type MediaList struct {

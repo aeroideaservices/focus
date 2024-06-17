@@ -68,3 +68,24 @@ func (h VideoHandler) Create(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, resp)
 }
+
+func (h VideoHandler) GenerateSubtitles(c *gin.Context) {
+	var mediaStrIds []string
+	if err := c.ShouldBindJSON(&mediaStrIds); err != nil {
+		_ = c.Error(errors.BadRequest.Wrap(err, "error validating"))
+		return
+	}
+
+	mediaIds, err := services.GetIdsFromStrings(mediaStrIds)
+	if err != nil {
+		_ = c.Error(errors.NotFound.Wrap(err, "uuid parsing error"))
+		return
+	}
+
+	err = h.videoUseCase.GenerateSubtitles(c, mediaIds)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+	c.JSON(http.StatusNoContent, nil)
+}

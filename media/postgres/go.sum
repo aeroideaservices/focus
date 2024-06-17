@@ -5,6 +5,8 @@ github.com/aeroideaservices/focus/media/plugin v1.0.0 h1:k4if5OIqFvG8dEr3PwLfgiR
 github.com/aeroideaservices/focus/media/plugin v1.0.0/go.mod h1:o6AsBK0RTK4YwelxpExVUSCoCnz/5TxcJ7a0Rd+W0Sc=
 github.com/aeroideaservices/focus/services/callbacks v1.0.0 h1:y22uDf9k5gv9OEfsbu3sU2CBqpkFcxBccUfqh1qu0m4=
 github.com/aeroideaservices/focus/services/callbacks v1.0.0/go.mod h1:ijhfnIgW6BVA3dB8F0b+PtnkXwWUiUeSNt6rcBFFASg=
+github.com/aeroideaservices/focus/services/db/db_types v1.0.0 h1:uptgg3FEn92FqxceUm/HlTHVvqPPv8DcLYiax5957L4=
+github.com/aeroideaservices/focus/services/db/db_types v1.0.0/go.mod h1:Sa5n84HZoKPn36ZXuIkYoRDNfCU9HHGmvJCyN/WQv4s=
 github.com/aeroideaservices/focus/services/errors v1.0.0 h1:glRyq4LCjO18nS+DHWITTvnFs4xNqe3zFyPPbfpjCmw=
 github.com/aeroideaservices/focus/services/errors v1.0.0/go.mod h1:ctao2UY13cGFVZBLwWnHvxYeSAexgjI/IdQdogZc0s8=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=

@@ -92,7 +92,8 @@ var Definitions = []di.Def{
 		Build: func(ctn di.Container) (interface{}, error) {
 			media := ctn.Get("focus.media.actions.media").(*media_usecase.Medias)
 			logger := ctn.Get("logger").(*zap.SugaredLogger)
-			return actions.NewVideoUseCase(media, logger), nil
+			yandexApiKey := ctn.Get("yandex.api.key").(string)
+			return actions.NewVideoUseCase(media, logger, yandexApiKey), nil
 		},
 	},
 }

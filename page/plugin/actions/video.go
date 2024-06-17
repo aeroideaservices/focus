@@ -3,29 +3,46 @@ package actions
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	mediaActions "github.com/aeroideaservices/focus/media/plugin/actions"
 	"github.com/aeroideaservices/focus/page/plugin/services"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
 	"io"
+	"io/ioutil"
+	"math"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+	"time"
+)
+
+const (
+	yandexSpeechUrl          = "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+	yandexSpeechOperationUrl = "https://operation.api.cloud.yandex.net/operations/"
+	chunks                   = 20
+	audioEncoding            = "MP3"
+	videoFormats             = ".mp4"
 )
 
 type VideoUseCase struct {
-	medias *mediaActions.Medias
-	logger *zap.SugaredLogger
+	medias       *mediaActions.Medias
+	logger       *zap.SugaredLogger
+	yandexApiKey string
 }
 
 func NewVideoUseCase(
 	medias *mediaActions.Medias,
 	logger *zap.SugaredLogger,
+	yandexApiKey string,
 ) *VideoUseCase {
 	return &VideoUseCase{
-		medias: medias,
-		logger: logger,
+		medias:       medias,
+		logger:       logger,
+		yandexApiKey: yandexApiKey,
 	}
 }
 
@@ -41,31 +58,33 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 	uc.logger.Debug("Uploading medias", "fileName", request.Filename)
 	fileExt := filepath.Ext(request.Filename)
 	fileTitle := strings.TrimSuffix(request.Filename, fileExt)
-	ids, err := uc.medias.UploadList(ctx, mediaActions.CreateMediasList{
-		FolderId: request.FolderId,
-		Files: []mediaActions.MediaFile{
-			{
-				Filename: request.Filename,
-				Size:     request.Size,
-				File:     request.File,
-			},
-			//{
-			//	Filename: fileTitle + "_compressed" + fileExt,
-			//	Size:     videoSamples.CompressedVideo.Size(),
-			//	File:     videoSamples.CompressedVideo,
-			//},
-			{
-				Filename: fileTitle + "_preview" + ".jpg",
-				Size:     videoSamples.Preview.Size(),
-				File:     videoSamples.Preview,
-			},
-			{
-				Filename: fileTitle + "_preview_blurred" + ".jpg",
-				Size:     videoSamples.PreviewBlurred.Size(),
-				File:     videoSamples.PreviewBlurred,
+	ids, err := uc.medias.UploadList(
+		ctx, mediaActions.CreateMediasList{
+			FolderId: request.FolderId,
+			Files: []mediaActions.MediaFile{
+				{
+					Filename: request.Filename,
+					Size:     request.Size,
+					File:     request.File,
+				},
+				//{
+				//	Filename: fileTitle + "_compressed" + fileExt,
+				//	Size:     videoSamples.CompressedVideo.Size(),
+				//	File:     videoSamples.CompressedVideo,
+				//},
+				{
+					Filename: fileTitle + "_preview" + ".jpg",
+					Size:     videoSamples.Preview.Size(),
+					File:     videoSamples.Preview,
+				},
+				{
+					Filename: fileTitle + "_preview_blurred" + ".jpg",
+					Size:     videoSamples.PreviewBlurred.Size(),
+					File:     videoSamples.PreviewBlurred,
+				},
 			},
 		},
-	})
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -80,6 +99,75 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 		PreviewId:        ids[1],
 		PreviewBlurredId: ids[2],
 	}, nil
+}
+
+func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UUID) error {
+
+	for _, id := range mediaIds {
+		// get file from s3
+		fileName, err := uc.medias.Download(ctx, mediaActions.GetMedia{Id: id})
+		if err != nil {
+			os.Remove(fileName)
+			return err
+		}
+		if !strings.Contains(videoFormats, filepath.Ext(fileName)) {
+			os.Remove(fileName)
+			return errors.New("file is not video")
+		}
+
+		// get audio from video
+		audio, audioFN, err := uc.getAudioFromVideo(fileName)
+
+		os.Remove(fileName)
+
+		// save audio to s3
+		uri, err := uc.medias.Upload(
+			ctx, mediaActions.CreateMedia{
+				Filename: audioFN,
+				Size:     audio.Size(),
+				File:     audio,
+			},
+		)
+
+		os.Remove(audioFN)
+
+		//  url of audio to yandex speech
+		operation, err := uc.requestYandexSpeech(uri)
+
+		if err != nil {
+			return err
+		}
+
+		operation, err = uc.getResultOfYandexSpeech(operation.Id)
+		if err != nil {
+			return err
+		}
+
+		saveOperations, err := uc.splitSubtitles(*operation, chunks)
+		if err != nil {
+			return err
+		}
+
+		subJson, err := json.Marshal(saveOperations)
+		if err != nil {
+			return err
+		}
+
+		updSubtitles := &mediaActions.UpdateMediaSubtitles{
+			Id: id,
+		}
+
+		err = updSubtitles.Subtitles.Scan(subJson)
+		if err != nil {
+			return err
+		}
+
+		err = uc.medias.UpdateSubtitles(ctx, *updSubtitles)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func (uc VideoUseCase) createVideoSamples(video io.ReadSeeker) (*VideoSamples, error) {
@@ -146,4 +234,138 @@ type VideoSamples struct {
 	CompressedVideo *bytes.Reader
 	PreviewBlurred  *bytes.Reader
 	Preview         *bytes.Reader
+}
+
+func (uc VideoUseCase) getAudioFromVideo(fname string) (*bytes.Reader, string, error) {
+	audio, audioFN, err := services.GetAudioFromVideo(fname)
+	return audio, audioFN, err
+}
+
+func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationResult, error) {
+	requestBody := RecognitionRequest{
+		Config: RecognitionConfig{
+			Specification: Specification{
+				ProfanityFilter: false,
+				LiteratureText:  true,
+				AudioEncoding:   audioEncoding,
+				RawResults:      false,
+			},
+		},
+		Audio: RecognitionAudio{
+			Uri: uri,
+		},
+	}
+
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		fmt.Println("Error marshalling request body:", err)
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", yandexSpeechUrl, bytes.NewBuffer(jsonData))
+	if err != nil {
+		fmt.Println("Error creating request:", err)
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Api-Key "+uc.yandexApiKey)
+
+	client := &http.Client{}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	operation := &YandexSpeechOperationResult{}
+	err = json.Unmarshal(body, operation)
+	if err != nil {
+		return nil, err
+	}
+
+	return operation, nil
+}
+
+func (uc VideoUseCase) getResultOfYandexSpeech(id string) (*YandexSpeechOperationResult, error) {
+	url := yandexSpeechOperationUrl + id
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("Authorization", "Api-Key "+uc.yandexApiKey)
+	operation := &YandexSpeechOperationResult{}
+
+	for true {
+		time.Sleep(time.Second * 30)
+		res, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		err = json.Unmarshal(body, operation)
+		if err != nil {
+			return nil, err
+		}
+		if operation.Done {
+			res.Body.Close()
+			return operation, nil
+		}
+		res.Body.Close()
+	}
+
+	return operation, nil
+}
+
+func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chunks int) (*SubtitlesToSave, error) {
+	if len(operation.Response.Chunks) < 0 {
+		return nil, errors.New("no chunks in response")
+	}
+	if len(operation.Response.Chunks[0].Alternatives[0].Words) == 0 {
+		return nil, errors.New("no words in response")
+	}
+	result := &SubtitlesToSave{
+		FullText: operation.Response.Chunks[0].Alternatives[0].Text,
+		Chunks:   make([]ChunkToSave, chunks),
+	}
+
+	chunkSize := int(math.Ceil(float64(len(operation.Response.Chunks[0].Alternatives[0].Words)) / float64(chunks)))
+
+	chunkIndex := 0
+
+	for i := 0; i < len(operation.Response.Chunks[0].Alternatives[0].Words); i += chunkSize {
+		end := i + chunkSize
+		if end > len(operation.Response.Chunks[0].Alternatives[0].Words) {
+			end = len(operation.Response.Chunks[0].Alternatives[0].Words)
+		}
+		startTime := operation.Response.Chunks[0].Alternatives[0].Words[i].StartTime
+		endTime := operation.Response.Chunks[0].Alternatives[0].Words[end-1].EndTime
+		chunkText := ""
+		for j := i; j < end; j++ {
+			chunkText += operation.Response.Chunks[0].Alternatives[0].Words[j].Word + " "
+		}
+
+		result.Chunks[chunkIndex] = ChunkToSave{
+			StartTime: startTime,
+			EndTime:   endTime,
+			Text:      chunkText,
+		}
+		chunkIndex++
+	}
+	return result, nil
 }
