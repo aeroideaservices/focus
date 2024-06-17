@@ -408,8 +408,8 @@ type YandexSpeechOperationResult struct {
 }
 
 type YandexSpeechResponse struct {
-	Type   string        `json:"@type"`
-	Chunks []interface{} `json:"chunks"`
+	Type   string  `json:"@type"`
+	Chunks []Chunk `json:"chunks"`
 }
 
 type Chunk struct {
@@ -448,4 +448,15 @@ type Specification struct {
 
 type RecognitionAudio struct {
 	Uri string `json:"uri"`
+}
+
+type SubtitlesToSave struct {
+	Chunks   []ChunkToSave `json:"chunks"`
+	FullText string        `json:"fullText"`
+}
+
+type ChunkToSave struct {
+	StartTime string `json:"startTime"`
+	EndTime   string `json:"endTime"`
+	Text      string `json:"text"`
 }

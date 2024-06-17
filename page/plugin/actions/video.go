@@ -12,6 +12,7 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
+	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -22,6 +23,7 @@ import (
 const (
 	yandexSpeechUrl          = "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
 	yandexSpeechOperationUrl = "https://operation.api.cloud.yandex.net/operations/"
+	chunks                   = 20
 )
 
 type VideoUseCase struct {
@@ -142,7 +144,12 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 			return err
 		}
 
-		subJson, err := json.Marshal(operation)
+		saveOperations, err := uc.splitSubtitles(*operation, chunks)
+		if err != nil {
+			return err
+		}
+
+		subJson, err := json.Marshal(saveOperations)
 		if err != nil {
 			return err
 		}
@@ -258,8 +265,8 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 		return nil, err
 	}
 
-	url := "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	//url := "https://transcribe.api.cloud.yandex.net/speech/stt/v2/longRunningRecognize"
+	req, err := http.NewRequest("POST", yandexSpeechUrl, bytes.NewBuffer(jsonData))
 	if err != nil {
 		fmt.Println("Error creating request:", err)
 		return nil, err
@@ -293,7 +300,7 @@ func (uc VideoUseCase) requestYandexSpeech(uri string) (*YandexSpeechOperationRe
 }
 
 func (uc VideoUseCase) getResultOfYandexSpeech(id string) (*YandexSpeechOperationResult, error) {
-	url := "https://operation.api.cloud.yandex.net/operations/" + id
+	url := yandexSpeechOperationUrl + id
 	method := "GET"
 
 	client := &http.Client{}
@@ -328,4 +335,43 @@ func (uc VideoUseCase) getResultOfYandexSpeech(id string) (*YandexSpeechOperatio
 	}
 
 	return operation, nil
+}
+
+func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chunks int) (*SubtitlesToSave, error) {
+	if len(operation.Response.Chunks) < 0 {
+		return nil, errors.New("no chunks in response")
+	}
+	if len(operation.Response.Chunks[0].Alternatives[0].Words) == 0 {
+		return nil, errors.New("no words in response")
+	}
+	result := &SubtitlesToSave{
+		FullText: operation.Response.Chunks[0].Alternatives[0].Text,
+		Chunks:   make([]ChunkToSave, chunks),
+	}
+
+	chunkSize := int(math.Ceil(float64(len(operation.Response.Chunks[0].Alternatives[0].Words)) / float64(chunks)))
+
+	chunkIndex := 0
+	//wordIndex := 0
+
+	for i := 0; i < len(operation.Response.Chunks[0].Alternatives[0].Words); i += chunkSize {
+		end := i + chunkSize
+		if end > len(operation.Response.Chunks[0].Alternatives[0].Words) {
+			end = len(operation.Response.Chunks[0].Alternatives[0].Words)
+		}
+		startTime := operation.Response.Chunks[0].Alternatives[0].Words[i].StartTime
+		endTime := operation.Response.Chunks[0].Alternatives[0].Words[end-1].EndTime
+		chunkText := ""
+		for j := i; j < i+chunkSize; j++ {
+			chunkText += operation.Response.Chunks[0].Alternatives[0].Words[i+j].Word + " "
+		}
+
+		result.Chunks[chunkIndex] = ChunkToSave{
+			StartTime: startTime,
+			EndTime:   endTime,
+			Text:      chunkText,
+		}
+		chunkIndex++
+	}
+	return result, nil
 }

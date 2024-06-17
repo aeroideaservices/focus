@@ -172,7 +172,7 @@ func (r mediaRepository) UpdateSubtitles(ctx context.Context, mediaId uuid.UUID,
 	err := r.db.WithContext(ctx).
 		Model(&entity.Media{}).
 		Where("id = ?", mediaId).
-		Update("subtitle", subtitle).
+		Update("subtitles", subtitle).
 		Error
 	if err != nil {
 		return errors.NoType.Wrap(err, "error updating media subtitle")
