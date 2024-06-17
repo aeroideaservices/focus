@@ -441,9 +441,6 @@ func (m Medias) UpdateSubtitles(ctx context.Context, dto UpdateMediaSubtitles) e
 	if err != nil {
 		return errors.NoType.Wrap(err, "error getting media by id")
 	}
-	if media.Subtitles == dto.Subtitles {
-		return ErrMediaAlreadyHasSameSubtitles
-	}
 
 	err = m.mediaRepository.UpdateSubtitles(ctx, dto.Id, dto.Subtitles)
 	if err != nil {
