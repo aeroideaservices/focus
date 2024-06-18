@@ -79,4 +79,5 @@ func (r *Router) SetRoutes(routerGroup *gin.RouterGroup) {
 
 	pages.POST("/video/upload", r.videoHandler.Create)
 	pages.POST("/video/generate/subtitles", r.videoHandler.GenerateSubtitles)
+	pages.PUT("/video/:media-id/subtitles", r.videoHandler.UpdateSubtitles)
 }

@@ -87,5 +87,21 @@ func (h VideoHandler) GenerateSubtitles(c *gin.Context) {
 		_ = c.Error(err)
 		return
 	}
-	c.JSON(http.StatusNoContent, nil)
+	c.JSON(http.StatusOK, "success")
+}
+
+func (h VideoHandler) UpdateSubtitles(c *gin.Context) {
+	var subtitles actions.SubtitlesToSave
+
+	if err := c.ShouldBindJSON(&subtitles); err != nil {
+		_ = c.Error(errors.BadRequest.Wrap(err, "error validating"))
+		return
+	}
+
+	err := h.videoUseCase.UpdateSubtitles(c, subtitles)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, "success")
 }
