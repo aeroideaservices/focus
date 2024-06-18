@@ -12,7 +12,6 @@ import (
 	"go.uber.org/zap"
 	"io"
 	"io/ioutil"
-	"math"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -168,6 +167,27 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 		}
 	}
 	return nil
+}
+
+func (uc VideoUseCase) UpdateSubtitles(ctx context.Context, subtitles SubtitlesToSave) error {
+
+	updatedSubtitles := uc.updateChunks(subtitles, chunks)
+
+	subJson, err := json.Marshal(updatedSubtitles)
+	if err != nil {
+		return err
+	}
+
+	updSubtitles := &mediaActions.UpdateMediaSubtitles{
+		Id: id,
+	}
+
+	err = updSubtitles.Subtitles.Scan(subJson)
+	if err != nil {
+		return err
+	}
+
+	return uc.medias.UpdateSubtitles(ctx, *updSubtitles)
 }
 
 func (uc VideoUseCase) createVideoSamples(video io.ReadSeeker) (*VideoSamples, error) {
@@ -344,7 +364,8 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 		Chunks:   make([]ChunkToSave, chunks),
 	}
 
-	chunkSize := int(math.Ceil(float64(len(operation.Response.Chunks[0].Alternatives[0].Words)) / float64(chunks)))
+	chunkSize := len(operation.Response.Chunks[0].Alternatives[0].Words) / chunks
+	extraWords := len(operation.Response.Chunks[0].Alternatives[0].Words) % chunks
 
 	chunkIndex := 0
 
@@ -353,6 +374,12 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 		if end > len(operation.Response.Chunks[0].Alternatives[0].Words) {
 			end = len(operation.Response.Chunks[0].Alternatives[0].Words)
 		}
+		extraWordFlag := chunkIndex < extraWords
+
+		if extraWordFlag {
+			end++
+		}
+
 		startTime := operation.Response.Chunks[0].Alternatives[0].Words[i].StartTime
 		endTime := operation.Response.Chunks[0].Alternatives[0].Words[end-1].EndTime
 		chunkText := ""
@@ -365,7 +392,42 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 			EndTime:   endTime,
 			Text:      chunkText,
 		}
+
+		if extraWordFlag {
+			i++
+		}
+
 		chunkIndex++
 	}
 	return result, nil
+}
+
+func (uc VideoUseCase) updateChunks(subtitles SubtitlesToSave, chunks int) *SubtitlesToSave {
+	newWords := strings.Split(subtitles.FullText, " ")
+	chunkSize := len(newWords) / chunks
+	extraWords := len(newWords) % chunks
+	chunkIndex := 0
+
+	for i := 0; i < len(newWords); i += chunkSize {
+		end := i + chunkSize
+		if end > len(newWords) {
+			end = len(newWords)
+		}
+		if chunkIndex < extraWords {
+			end++
+		}
+
+		chunkText := ""
+		for j := i; j < end; j++ {
+			chunkText += newWords[j] + " "
+		}
+		subtitles.Chunks[chunkIndex].Text = chunkText
+
+		if chunkIndex < extraWords {
+			i++
+		}
+		chunkIndex++
+	}
+
+	return &subtitles
 }
