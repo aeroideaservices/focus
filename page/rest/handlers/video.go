@@ -91,6 +91,12 @@ func (h VideoHandler) GenerateSubtitles(c *gin.Context) {
 }
 
 func (h VideoHandler) UpdateSubtitles(c *gin.Context) {
+	mediaId, err := uuid.Parse(c.Params.ByName("media-id"))
+	if err != nil {
+		_ = c.Error(errors.NotFound.Wrap(err, "uuid parsing error"))
+		return
+	}
+
 	var subtitles actions.SubtitlesToSave
 
 	if err := c.ShouldBindJSON(&subtitles); err != nil {
@@ -98,7 +104,7 @@ func (h VideoHandler) UpdateSubtitles(c *gin.Context) {
 		return
 	}
 
-	err := h.videoUseCase.UpdateSubtitles(c, subtitles)
+	err = h.videoUseCase.UpdateSubtitles(c, subtitles, mediaId)
 	if err != nil {
 		_ = c.Error(err)
 		return

@@ -169,7 +169,7 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 	return nil
 }
 
-func (uc VideoUseCase) UpdateSubtitles(ctx context.Context, subtitles SubtitlesToSave) error {
+func (uc VideoUseCase) UpdateSubtitles(ctx context.Context, subtitles SubtitlesToSave, mediaId uuid.UUID) error {
 
 	updatedSubtitles := uc.updateChunks(subtitles, chunks)
 
@@ -179,7 +179,7 @@ func (uc VideoUseCase) UpdateSubtitles(ctx context.Context, subtitles SubtitlesT
 	}
 
 	updSubtitles := &mediaActions.UpdateMediaSubtitles{
-		Id: id,
+		Id: mediaId,
 	}
 
 	err = updSubtitles.Subtitles.Scan(subJson)
