@@ -162,6 +162,21 @@ func (m Medias) Upload(ctx context.Context, dto CreateMedia) (string, error) {
 	return m.mediaProvider.GetUrlById(*id)
 }
 
+// Upload загрузка нового медиа, возвращающая id
+func (m Medias) UploadReturnsId(ctx context.Context, dto CreateMedia) (string, *uuid.UUID, error) {
+	id, err := m.Create(ctx, dto)
+	if err != nil {
+		return "", nil, err
+	}
+
+	url, err := m.mediaProvider.GetUrlById(*id)
+	if err != nil {
+		return "", nil, err
+	}
+
+	return url, id, nil
+}
+
 // UploadList загрузка нескольких медиа
 func (m Medias) UploadList(ctx context.Context, dto CreateMediasList) ([]uuid.UUID, error) {
 	for _, file := range dto.Files {

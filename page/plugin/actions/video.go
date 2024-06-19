@@ -92,6 +92,8 @@ func (uc VideoUseCase) Create(request CreateVideoRequest) (*CreateVideoResponse,
 		return nil, fmt.Errorf("error uploading medias")
 	}
 
+	go uc.GenerateSubtitles(ctx, []uuid.UUID{ids[0]})
+
 	return &CreateVideoResponse{
 		VideoId: ids[0],
 		//VideoLiteId:      ids[1],
@@ -120,7 +122,7 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 		os.Remove(fileName)
 
 		// save audio to s3
-		uri, err := uc.medias.Upload(
+		uri, audioId, err := uc.medias.UploadReturnsId(
 			ctx, mediaActions.CreateMedia{
 				Filename: audioFN,
 				Size:     audio.Size(),
@@ -165,6 +167,8 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 		if err != nil {
 			return err
 		}
+
+		_ = uc.medias.Delete(ctx, mediaActions.GetMedia{Id: *audioId})
 	}
 	return nil
 }
