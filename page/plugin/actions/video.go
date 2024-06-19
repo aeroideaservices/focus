@@ -168,7 +168,7 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 			return err
 		}
 
-		_ = uc.medias.Delete(ctx, mediaActions.GetMedia{Id: audioId})
+		_ = uc.medias.Delete(ctx, mediaActions.GetMedia{Id: *audioId})
 	}
 	return nil
 }
