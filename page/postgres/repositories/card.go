@@ -42,7 +42,7 @@ func (r *CardRepository) GetListWithSearch(ctx context.Context, searchValue stri
 		Preload("RegularCard.RegularCardsTags.Tag").
 		Preload("RegularCard.User.Picture").
 		Preload("PhotoCard").Preload("PhotoCard.Picture").
-		Preload("FormCard").Preload("FormCard.Background").Preload("FormCard.User").Preload("FormCard.User.Picture").
+		Preload("FormCard").Preload("FormCard.User").Preload("FormCard.User.Picture").
 		Preload("FormCard.FormCardsTags.Tag").Preload("FormCard.Form").
 		Where("lower(type) LIKE lower(?)", "%"+searchValue+"%")
 	if name != "" {
@@ -70,7 +70,7 @@ func (r *CardRepository) GetById(ctx context.Context, cardId uuid.UUID) (*entity
 		Preload("RegularCard.User").Preload("RegularCard.User.Picture").
 		Preload("RegularCard.RegularCardsTags.Tag").
 		Preload("PhotoCard").Preload("PhotoCard.Picture").
-		Preload("FormCard").Preload("FormCard.Background").Preload("FormCard.User").Preload("FormCard.User.Picture").
+		Preload("FormCard").Preload("FormCard.User").Preload("FormCard.User.Picture").
 		Preload("FormCard.FormCardsTags.Tag").Preload("FormCard.Form")
 
 	err := db.First(card).Error
@@ -111,7 +111,7 @@ func (r *CardRepository) GetListByGalleryId(ctx context.Context, galleryId uuid.
 		Preload("RegularCard").Preload("RegularCard.Video").Preload("RegularCard.VideoLite").Preload("RegularCard.VideoPreview").Preload("RegularCard.VideoPreviewBlur").Preload("RegularCard.User").
 		Preload("RegularCard.RegularCardsTags.Tag").
 		Preload("PhotoCard").Preload("PhotoCard.Picture").
-		Preload("FormCard").Preload("FormCard.Background").Preload("FormCard.User").Preload("FormCard.User.Picture").
+		Preload("FormCard").Preload("FormCard.User").Preload("FormCard.User.Picture").
 		Preload("FormCard.FormCardsTags.Tag").Preload("FormCard.Form").
 		Find(&cards)
 

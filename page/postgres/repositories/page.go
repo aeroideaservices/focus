@@ -47,7 +47,7 @@ func (r *PageRepository) GetById(ctx context.Context, id uuid.UUID) (
 		Preload("PagesGalleries.Gallery.GalleriesCards.Card.RegularCard.User.Picture").
 		Preload("PagesGalleries.Gallery.GalleriesCards.Card.PhotoCard").
 		Preload("PagesGalleries.Gallery.GalleriesCards.Card.PhotoCard.Picture").
-		Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard").Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard.Background").
+		Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard").
 		Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard.User").Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard.User.Picture").
 		Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard.FormCardsTags.Tag").Preload("PagesGalleries.Gallery.GalleriesCards.Card.FormCard.Form").
 		Where("id", id)

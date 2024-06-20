@@ -428,13 +428,13 @@ func (uc CardUseCase) GetDtosFromCard(cards []entity.Card) (cardDtos []CardDtoWi
 			if err != nil {
 				return nil, err
 			}
-			if cardDto.FormCard.Background != nil {
-				cardDto.FormCard.Background.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.Background.Id)
-				if err != nil {
-					err = errors.BadRequest.Wrap(err, "error getting background media url")
-					return
-				}
-			}
+			// if cardDto.FormCard.Background != nil {
+			// 	cardDto.FormCard.Background.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.Background.Id)
+			// 	if err != nil {
+			// 		err = errors.BadRequest.Wrap(err, "error getting background media url")
+			// 		return
+			// 	}
+			// }
 			if cardDto.FormCard.User != nil && cardDto.FormCard.User.Picture != nil {
 				cardDto.FormCard.User.Picture.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.User.Picture.Id)
 				if err != nil {
@@ -697,13 +697,13 @@ func (uc CardUseCase) GetDtoFromCard(card *entity.Card) (cardDto *CardDtoWithout
 		if err != nil {
 			return nil, err
 		}
-		if cardDto.FormCard.Background != nil {
-			cardDto.FormCard.Background.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.Background.Id)
-			if err != nil {
-				err = errors.BadRequest.Wrap(err, "error getting background media url")
-				return
-			}
-		}
+		// if cardDto.FormCard.Background != nil {
+		// 	cardDto.FormCard.Background.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.Background.Id)
+		// 	if err != nil {
+		// 		err = errors.BadRequest.Wrap(err, "error getting background media url")
+		// 		return
+		// 	}
+		// }
 		if cardDto.FormCard.User != nil && cardDto.FormCard.User.Picture != nil {
 			cardDto.FormCard.User.Picture.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.User.Picture.Id)
 			if err != nil {
@@ -832,13 +832,13 @@ func (uc CardUseCase) GetDtosFromGalleriesCard(gallery []entity.GalleriesCards) 
 			if err != nil {
 				return nil, err
 			}
-			if cardDto.FormCard.Background != nil {
-				cardDto.FormCard.Background.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.Background.Id)
-				if err != nil {
-					err = errors.BadRequest.Wrap(err, "error getting background media url")
-					return
-				}
-			}
+			// if cardDto.FormCard.Background != nil {
+			// 	cardDto.FormCard.Background.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.Background.Id)
+			// 	if err != nil {
+			// 		err = errors.BadRequest.Wrap(err, "error getting background media url")
+			// 		return
+			// 	}
+			// }
 			if cardDto.FormCard.User != nil && cardDto.FormCard.User.Picture != nil {
 				cardDto.FormCard.User.Picture.Filepath, err = uc.mediaProvider.GetUrlById(cardDto.FormCard.User.Picture.Id)
 				if err != nil {

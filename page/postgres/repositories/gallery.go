@@ -55,7 +55,7 @@ func (r *GalleryRepository) GetById(ctx context.Context, id uuid.UUID) (*entity.
 		Preload("GalleriesCards.Card.RegularCard.RegularCardsTags.Tag").
 		Preload("GalleriesCards.Card.RegularCard.User.Picture").
 		Preload("GalleriesCards.Card.PhotoCard").Preload("GalleriesCards.Card.PhotoCard.Picture").
-		Preload("GalleriesCards.Card.FormCard").Preload("GalleriesCards.Card.FormCard.Background").Preload("GalleriesCards.Card.FormCard.User").Preload("GalleriesCards.Card.FormCard.User.Picture").
+		Preload("GalleriesCards.Card.FormCard").Preload("GalleriesCards.Card.FormCard.User").Preload("GalleriesCards.Card.FormCard.User.Picture").
 		Preload("GalleriesCards.Card.FormCard.FormCardsTags.Tag").Preload("GalleriesCards.Card.FormCard.Form").
 		Where("id", id)
 	err := db.First(gallery).Error
@@ -120,7 +120,7 @@ func (r *GalleryRepository) GetListWithSearch(ctx context.Context, searchValue s
 		Preload("GalleriesCards.Card.RegularCard.RegularCardsTags.Tag").
 		Preload("GalleriesCards.Card.RegularCard.User.Picture").
 		Preload("GalleriesCards.Card.PhotoCard").Preload("GalleriesCards.Card.PhotoCard.Picture").
-		Preload("GalleriesCards.Card.FormCard").Preload("GalleriesCards.Card.FormCard.Background").Preload("GalleriesCards.Card.FormCard.User").Preload("GalleriesCards.Card.FormCard.User.Picture").
+		Preload("GalleriesCards.Card.FormCard").Preload("GalleriesCards.Card.FormCard.User").Preload("GalleriesCards.Card.FormCard.User.Picture").
 		Preload("GalleriesCards.Card.FormCard.FormCardsTags.Tag").Preload("GalleriesCards.Card.FormCard.Form").
 		Where("lower(name) LIKE lower(?)", "%"+searchValue+"%").
 		Or("lower(code) LIKE lower(?)", "%"+searchValue+"%")

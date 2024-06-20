@@ -104,8 +104,6 @@ type FormCard struct {
 	ID            uuid.UUID       `focus:"primaryKey;code:id;column:id;title:ID" validate:"required,notBlank"`
 	Form          *entity2.Form   `focus:"title:форма;view:select;hidden:list" validate:"omitempty,structonly"`
 	FormId        *uuid.UUID      `focus:"-"`
-	Background    *entity.Media   `focus:"title:Фото;media;hidden:list"`
-	BackgroundId  *uuid.UUID      `focus:"-"`
 	User          *User           `focus:"title:Спикер;view:select;viewExtra:userSelect;hidden:list" validate:"omitempty,structonly"`
 	UserId        *uuid.UUID      `focus:"-"`
 	FormCardsTags []FormCardsTags `focus:"-" gorm:"foreignKey:FormCardID" validate:"omitempty,unique=ID,dive,notBlank,structonly"`

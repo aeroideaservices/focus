@@ -241,7 +241,6 @@ type PhotoCardDto struct {
 
 type FormCardDto struct {
 	Form         *FormDto      `json:"form"`
-	Background   *entity.Media `json:"background"`
 	User         *UserDto      `json:"user"`
 	Tags         []TagDto      `json:"tags"`
 	LearnMoreUrl *string       `json:"learnMoreUrl"`
@@ -351,7 +350,6 @@ type CreatePhotoCardRequest struct {
 
 type CreateFormCardRequest struct {
 	FormId       *uuid.UUID  `json:"formId"`
-	BackgroundId *uuid.UUID  `json:"backgroundId"`
 	UserId       *uuid.UUID  `json:"userId"`
 	Tags         []uuid.UUID `json:"tags"`
 	LearnMoreUrl *string     `json:"learnMoreUrl"`
