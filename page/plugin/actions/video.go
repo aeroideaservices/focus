@@ -121,6 +121,13 @@ func (uc VideoUseCase) GenerateSubtitles(ctx context.Context, mediaIds []uuid.UU
 
 		os.Remove(fileName)
 
+		if err != nil {
+			return err
+		}
+		if audio == nil {
+			return errors.New("error getting audio from video")
+		}
+
 		// save audio to s3
 		uri, audioId, err := uc.medias.UploadReturnsId(
 			ctx, mediaActions.CreateMedia{
