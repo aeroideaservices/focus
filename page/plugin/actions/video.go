@@ -367,23 +367,40 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 	if len(operation.Response.Chunks) < 0 {
 		return nil, errors.New("no chunks in response")
 	}
-	if len(operation.Response.Chunks[0].Alternatives[0].Words) == 0 {
+
+	allChunks := &Chunk{
+		Alternatives: []Alternative{
+			{
+				Words: make([]Word, 0),
+				Text:  "",
+			},
+		},
+	}
+
+	for _, chunk := range operation.Response.Chunks {
+		if chunk.ChannelTag == "1" {
+			allChunks.Alternatives[0].Words = append(allChunks.Alternatives[0].Words, chunk.Alternatives[0].Words...)
+			allChunks.Alternatives[0].Text += chunk.Alternatives[0].Text + " "
+		}
+	}
+
+	if len(allChunks.Alternatives[0].Words) == 0 {
 		return nil, errors.New("no words in response")
 	}
 	result := &SubtitlesToSave{
-		FullText: operation.Response.Chunks[0].Alternatives[0].Text,
+		FullText: allChunks.Alternatives[0].Text,
 		Chunks:   make([]ChunkToSave, chunks),
 	}
 
-	chunkSize := len(operation.Response.Chunks[0].Alternatives[0].Words) / chunks
-	extraWords := len(operation.Response.Chunks[0].Alternatives[0].Words) % chunks
+	chunkSize := len(allChunks.Alternatives[0].Words) / chunks
+	extraWords := len(allChunks.Alternatives[0].Words) % chunks
 
 	chunkIndex := 0
 
-	for i := 0; i < len(operation.Response.Chunks[0].Alternatives[0].Words); i += chunkSize {
+	for i := 0; i < len(allChunks.Alternatives[0].Words); i += chunkSize {
 		end := i + chunkSize
-		if end > len(operation.Response.Chunks[0].Alternatives[0].Words) {
-			end = len(operation.Response.Chunks[0].Alternatives[0].Words)
+		if end > len(allChunks.Alternatives[0].Words) {
+			end = len(allChunks.Alternatives[0].Words)
 		}
 		extraWordFlag := chunkIndex < extraWords
 
@@ -391,11 +408,11 @@ func (uc VideoUseCase) splitSubtitles(operation YandexSpeechOperationResult, chu
 			end++
 		}
 
-		startTime := operation.Response.Chunks[0].Alternatives[0].Words[i].StartTime
-		endTime := operation.Response.Chunks[0].Alternatives[0].Words[end-1].EndTime
+		startTime := allChunks.Alternatives[0].Words[i].StartTime
+		endTime := allChunks.Alternatives[0].Words[end-1].EndTime
 		chunkText := ""
 		for j := i; j < end; j++ {
-			chunkText += operation.Response.Chunks[0].Alternatives[0].Words[j].Word + " "
+			chunkText += allChunks.Alternatives[0].Words[j].Word + " "
 		}
 
 		result.Chunks[chunkIndex] = ChunkToSave{
